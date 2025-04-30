@@ -67,7 +67,7 @@ export function NowPlaying() {
   }, [lastTrackId]);
 
   return (
-    <div className="w-full" style={{ backgroundColor: '#800080', padding: '10px', borderRadius: '12px' }}>
+    <div className="w-full">
       {isLoading ? (
         <div
           style={{
