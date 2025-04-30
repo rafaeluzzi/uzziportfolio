@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Code, Braces, Laptop, Smartphone, GitFork } from 'lucide-react';
+import { Code, Braces, Laptop, Smartphone, Binary } from 'lucide-react';
 
 const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
@@ -68,7 +68,7 @@ const LoadingScreen = () => {
           </motion.div>
           
           <motion.div 
-            className="absolute bottom-0 text-primary-500 opacity-75"
+            className="absolute bottom-0 text-light-400"
             animate={{ 
               y: [0, 8, 0],
             }}
@@ -79,7 +79,7 @@ const LoadingScreen = () => {
               ease: "easeInOut"
             }}
           >
-            <GitFork size={24} />
+            <Binary size={24} />
           </motion.div>
           
           

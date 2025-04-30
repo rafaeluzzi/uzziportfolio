@@ -66,7 +66,7 @@ function App() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      //setIsLoading(false);
+      setIsLoading(false);
     }, 3000);
 
     return () => clearTimeout(timeout);
