@@ -59,7 +59,6 @@ export function NowPlaying() {
   if (!track) return null;
 
   return (
-    <div className="w-full" style={{ backgroundColor: '#800080', padding: '10px', borderRadius: '12px' }}>
       <iframe
         style={{ borderRadius: '12px' }}
         src={`${track.embedUrl}?utm_source=generator&theme=0`}
@@ -68,6 +67,5 @@ export function NowPlaying() {
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
         loading="lazy"
       ></iframe>
-    </div>
   );
 }
