@@ -67,7 +67,7 @@ export function NowPlaying() {
   }, [lastTrackId]);
 
   return (
-    <div className="w-full">
+    <div className="w-full" style={{ backgroundColor: 'transparent' }}>
       {isLoading ? (
         <div
           style={{
