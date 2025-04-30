@@ -10,6 +10,7 @@ interface SpotifyTrack {
 export function NowPlaying() {
   const [track, setTrack] = useState<SpotifyTrack | null>(null);
   const [lastTrackId, setLastTrackId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function fetchNowPlaying() {
@@ -30,7 +31,10 @@ export function NowPlaying() {
         const trackId = `${recentTrack.name}-${recentTrack.artist['#text']}`;
         if (trackId === lastTrackId) return; // Skip if track hasn't changed
 
-        // Track changed, fetch from Spotify
+        // Track changed, start loading animation
+        setIsLoading(true);
+
+        // Fetch from Spotify
         const trackName = recentTrack.name;
         const artistName = recentTrack.artist['#text'];
         const query = `${trackName} ${artistName}`;
@@ -41,13 +45,19 @@ export function NowPlaying() {
 
         if (spotifyRes.ok) {
           const data = await spotifyRes.json();
-          setTrack(data);
-          setLastTrackId(trackId); // Update cached track ID
+          // Ensure loading animation shows for at least 3 seconds
+          setTimeout(() => {
+            setTrack(data);
+            setLastTrackId(trackId);
+            setIsLoading(false);
+          }, 3000);
         } else {
           console.error('Spotify API error:', spotifyRes.status);
+          setIsLoading(false); // Stop loading on error
         }
       } catch (error) {
         console.error('Error fetching now playing:', error);
+        setIsLoading(false); // Stop loading on error
       }
     }
 
@@ -56,16 +66,49 @@ export function NowPlaying() {
     return () => clearInterval(interval);
   }, [lastTrackId]);
 
-  if (!track) return null;
-
   return (
-      <iframe
-        style={{ borderRadius: '12px' }}
-        src={`${track.embedUrl}?utm_source=generator&theme=0`}
-        width="100%"
-        height="152"
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"
-      ></iframe>
+    <div className="w-full" style={{ backgroundColor: '#800080', padding: '10px', borderRadius: '12px' }}>
+      {isLoading ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '152px', // Match iframe height
+            background: 'radial-gradient(circle, #A855F7, #4F46E5)',
+            borderRadius: '12px',
+            animation: 'pulse 1.5s ease-in-out infinite',
+          }}
+        >
+          <style>
+            {`
+              @keyframes pulse {
+                0% {
+                  transform: scale(0.8);
+                  opacity: 0.7;
+                }
+                50% {
+                  transform: scale(1);
+                  opacity: 1;
+                }
+                100% {
+                  transform: scale(0.8);
+                  opacity: 0.7;
+                }
+              }
+            `}
+          </style>
+        </div>
+      ) : track ? (
+        <iframe
+          style={{ borderRadius: '12px' }}
+          src={`${track.embedUrl}?utm_source=generator&theme=0`}
+          width="100%"
+          height="152"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      ) : null}
+    </div>
   );
 }
