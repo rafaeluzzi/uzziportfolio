@@ -102,6 +102,7 @@ const Hero: React.FC = () => {
 
               {/* Featured Work */}
               <GlassCard 
+                icon={Music}
                 className="col-span-8 row-span-2"
                 label="I'm now playing"
               >
