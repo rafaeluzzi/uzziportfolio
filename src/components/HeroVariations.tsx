@@ -4,8 +4,7 @@ import {
   ArrowRight, Code, Server, 
   Smartphone, Github, MapPin,
   Twitter, Globe, Music,
-  Keyboard, Coffee
-} from 'lucide-react';
+  Keyboard} from 'lucide-react';
 import GlassCard from './GlassCard';
 import AppleMap from './AppleMap';
 import GitHubCalendar from 'react-github-calendar';
@@ -100,14 +99,9 @@ const Hero: React.FC = () => {
                 </div>
               </GlassCard>
 
-              {/* Featured Work */}
-              <GlassCard 
-                icon={Music}
-                className="col-span-8 row-span-2"
-                label="I'm now playing"
-              >
+              {/* Music */}
+            
                <NowPlaying />
-              </GlassCard>
 
               {/* Social Links */}
               <GlassCard className="col-span-4 row-span-1">

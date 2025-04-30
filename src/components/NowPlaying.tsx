@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Music } from 'lucide-react';
+import GlassCard from './GlassCard';
 
 interface SpotifyTrack {
   name: string;
@@ -11,6 +13,7 @@ export function NowPlaying() {
   const [track, setTrack] = useState<SpotifyTrack | null>(null);
   const [lastTrackId, setLastTrackId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [playTitle, setPlayTitle] = useState<string>("I'm now playing");
 
   useEffect(() => {
     async function fetchNowPlaying() {
@@ -20,16 +23,28 @@ export function NowPlaying() {
         );
         if (lastFmRes.status === 429) {
           console.warn('Last.fm rate limit hit, retrying in 1s');
-          setTimeout(fetchNowPlaying, 1000); // Backoff for Last.fm
+          setTimeout(fetchNowPlaying, 1000);
           return;
         }
-        const lastFmData = await lastFmRes.json();
+        const lastFmData = await lastFmData.json();
         const recentTrack = lastFmData.recenttracks?.track?.[0];
-        if (!recentTrack || recentTrack['@attr']?.nowplaying !== 'true') return;
+
+        // Set playTitle based on nowplaying status
+        setPlayTitle(
+          recentTrack && recentTrack['@attr']?.nowplaying === 'true'
+            ? "I'm now playing"
+            : "Last played song"
+        );
+
+        // Exit if no valid track
+        if (!recentTrack || !recentTrack.name || !recentTrack.artist['#text']) {
+          setIsLoading(false);
+          return;
+        }
 
         // Create unique track ID for comparison
         const trackId = `${recentTrack.name}-${recentTrack.artist['#text']}`;
-        if (trackId === lastTrackId) return; // Skip if track hasn't changed
+        if (trackId === lastndashId) return;
 
         // Track changed, start loading animation
         setIsLoading(true);
@@ -53,28 +68,32 @@ export function NowPlaying() {
           }, 3000);
         } else {
           console.error('Spotify API error:', spotifyRes.status);
-          setIsLoading(false); // Stop loading on error
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Error fetching now playing:', error);
-        setIsLoading(false); // Stop loading on error
+        setIsLoading(false);
       }
     }
 
     fetchNowPlaying();
-    const interval = setInterval(fetchNowPlaying, 15000); // Poll every 15s
+    const interval = setInterval(fetchNowPlaying, 15000);
     return () => clearInterval(interval);
   }, [lastTrackId]);
 
   return (
-    <div className="w-full" style={{ backgroundColor: 'transparent' }}>
+    <GlassCard
+      icon={Music}
+      className="col-span-8 row-span-2"
+      label={playTitle}
+    >
       {isLoading ? (
         <div
           style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '152px', // Match iframe height
+            height: '152px',
             background: 'radial-gradient(circle, #A855F7, #4F46E5)',
             borderRadius: '12px',
             animation: 'pulse 1.5s ease-in-out infinite',
@@ -83,18 +102,9 @@ export function NowPlaying() {
           <style>
             {`
               @keyframes pulse {
-                0% {
-                  transform: scale(0.8);
-                  opacity: 0.7;
-                }
-                50% {
-                  transform: scale(1);
-                  opacity: 1;
-                }
-                100% {
-                  transform: scale(0.8);
-                  opacity: 0.7;
-                }
+                0% { transform: scale(0.8); opacity: 0.7; }
+                50% { transform: scale(1); opacity: 1; }
+                100% { transform: scale(0.8); opacity: 0.7; }
               }
             `}
           </style>
@@ -109,6 +119,6 @@ export function NowPlaying() {
           loading="lazy"
         ></iframe>
       ) : null}
-    </div>
+    </GlassCard>
   );
 }
