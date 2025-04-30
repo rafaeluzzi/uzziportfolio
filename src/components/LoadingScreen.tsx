@@ -35,37 +35,11 @@ const LoadingScreen = () => {
         transition={{ duration: 0.5 }}
       >
         <div className="relative flex items-center justify-center mb-10">
-          <motion.div 
-            className="absolute"
-            animate={{ 
-              rotate: 360,
-            }}
-            transition={{ 
-              duration: 8, 
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          >
-            <div className="w-32 h-32 rounded-full border-4 border-secondary-500 border-opacity-20"></div>
-          </motion.div>
           
-          <motion.div 
-            className="absolute"
-            animate={{ 
-              rotate: -360,
-            }}
-            transition={{ 
-              duration: 12, 
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          >
-            <div className="w-40 h-40 rounded-full border-4 border-primary-500 border-opacity-10"></div>
-          </motion.div>
           
           {/* Icons */}
           <motion.div 
-            className="absolute top-0 text-primary-400"
+            className="absolute top-2 text-light-300 opacity-75"
             animate={{ 
               y: [0, -8, 0],
             }}
@@ -79,7 +53,7 @@ const LoadingScreen = () => {
           </motion.div>
           
           <motion.div 
-            className="absolute right-0 text-secondary-400"
+            className="absolute right-2 text-light-300 opacity-75"
             animate={{ 
               x: [0, 8, 0],
             }}
@@ -94,7 +68,7 @@ const LoadingScreen = () => {
           </motion.div>
           
           <motion.div 
-            className="absolute bottom-0 text-accent-400"
+            className="absolute bottom-2 text-light-300 opacity-75"
             animate={{ 
               y: [0, 8, 0],
             }}
@@ -109,7 +83,7 @@ const LoadingScreen = () => {
           </motion.div>
           
           <motion.div 
-            className="absolute left-0 text-primary-300"
+            className="absolute left-2 text-light-300 opacity-75"
             animate={{ 
               x: [0, -8, 0],
             }}
@@ -123,7 +97,7 @@ const LoadingScreen = () => {
             <Smartphone size={24} />
           </motion.div>
           
-          <div className="text-4xl font-semibold glass-card px-6 py-3 text-gradient">JD</div>
+          
         </div>
       </motion.div>
       
