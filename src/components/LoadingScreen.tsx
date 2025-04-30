@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Code, Braces, Laptop, Smartphone } from 'lucide-react';
+import { Code, Braces, Laptop, Smartphone, GitFork } from 'lucide-react';
 
 const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
@@ -39,7 +39,7 @@ const LoadingScreen = () => {
           
           {/* Icons */}
           <motion.div 
-            className="absolute top-2 text-light-300 opacity-75"
+            className="absolute top-1 text-secondary-300 opacity-0"
             animate={{ 
               y: [0, -8, 0],
             }}
@@ -49,13 +49,13 @@ const LoadingScreen = () => {
               ease: "easeInOut"
             }}
           >
-            <Code size={24} />
+            <Braces size={24} />
           </motion.div>
           
           <motion.div 
-            className="absolute right-2 text-light-300 opacity-75"
+            className="absolute bottom-3 text-secondary-300 opacity-0"
             animate={{ 
-              x: [0, 8, 0],
+              y: [0, 8, 0],
             }}
             transition={{ 
               duration: 2,
@@ -68,7 +68,7 @@ const LoadingScreen = () => {
           </motion.div>
           
           <motion.div 
-            className="absolute bottom-2 text-light-300 opacity-75"
+            className="absolute bottom-0 text-primary-500 opacity-75"
             animate={{ 
               y: [0, 8, 0],
             }}
@@ -79,23 +79,10 @@ const LoadingScreen = () => {
               ease: "easeInOut"
             }}
           >
-            <Laptop size={24} />
+            <GitFork size={24} />
           </motion.div>
           
-          <motion.div 
-            className="absolute left-2 text-light-300 opacity-75"
-            animate={{ 
-              x: [0, -8, 0],
-            }}
-            transition={{ 
-              duration: 2,
-              delay: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <Smartphone size={24} />
-          </motion.div>
+          
           
           
         </div>
