@@ -103,14 +103,9 @@ const Hero: React.FC = () => {
               {/* Featured Work */}
               <GlassCard 
                 className="col-span-8 row-span-2"
-                label="Featured work"
+                label="I'm now playing"
               >
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-light-100">Bookmarked</h3>
-                  <p className="text-sm text-light-300">
-                    Effortlessly save and organize your favorite tweets in Notion using a Telegram bot.
-                  </p>
-                </div>
+               <NowPlaying />
               </GlassCard>
 
               {/* Social Links */}
@@ -128,7 +123,7 @@ const Hero: React.FC = () => {
                 label="Now playing"
                 className="col-span-8 row-span-1"
               >
-                <NowPlaying />
+                
               </GlassCard>
 
               {/* GitHub Activity */}
