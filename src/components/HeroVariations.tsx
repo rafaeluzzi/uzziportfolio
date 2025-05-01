@@ -4,7 +4,14 @@ import {
   ArrowRight, Code, Server, 
   Smartphone, Github, MapPin,
   Twitter, Globe, Music,
-  Keyboard} from 'lucide-react';
+  Keyboard, 
+  FileJson, FileCode, Blocks, 
+  LayoutTemplate, Monitor, 
+  Database, Cloud, 
+  Flame, Laptop,
+  Bot, Container, 
+  GitBranch, Upload,
+  Boxes, Binary,BotMessageSquare} from 'lucide-react';
 import GlassCard from './GlassCard';
 import AppleMap from './AppleMap';
 import GitHubCalendar from 'react-github-calendar';
@@ -12,13 +19,32 @@ import GitHubCalendar from 'react-github-calendar';
 import { NowPlaying } from './NowPlaying'; 
 
 const techStacks = [
-  { name: 'Astro', image: 'https://astro.build/favicon.svg' },
-  { name: 'Vue', image: 'https://vuejs.org/images/logo.png' },
-  { name: 'Docker', image: 'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png' },
-  { name: 'TypeScript', image: 'https://www.typescriptlang.org/favicon-32x32.png' },
-  { name: 'Next.js', image: 'https://nextjs.org/favicon.ico' }
+  { name: 'JavaScript', icon: FileJson },
+  { name: 'TypeScript', icon: FileCode },
+  { name: 'React', icon: Blocks },
+  { name: 'React Native', icon: Smartphone },
+  { name: 'Next.js', icon: LayoutTemplate },
+  { name: 'Node.js', icon: Server },
+  { name: 'Express', icon: Monitor },
+  { name: 'Tailwind', icon: Flame },
+  { name: 'ShadCN', icon: Laptop },
+  { name: 'Vite', icon: Binary },
+  { name: 'Puppeteer', icon: Bot },
+  { name: 'PostgreSQL', icon: Database },
+  { name: 'MongoDB', icon: Database },
+  { name: 'Firebase', icon: Flame },
+  { name: 'AWS', icon: Cloud },
+  { name: 'REST APIs', icon: Server },
+  { name: 'Python', icon: FileCode },
+  { name: 'Rails', icon: Blocks },
+  { name: 'Docker', icon: Container },
+  { name: 'GitHub Actions', icon: GitBranch },
+  { name: 'Vercel', icon: Upload },
+  { name: 'Netlify', icon: Boxes },
+  { name: 'GitHub Copilot', icon: Bot },
+  { name: 'VS Code', icon: Monitor },
+  { name: 'AI-assisted Tools', icon: BotMessageSquare }
 ];
-
 const Hero: React.FC = () => {
   return (
       <section className="min-h-screen relative flex items-center">
@@ -115,9 +141,37 @@ const Hero: React.FC = () => {
               {/* Now Playing */}
               <GlassCard 
                 icon={Music}
-                label="Now playing"
-                className="col-span-8 row-span-1"
+                label="My Tech stack"
+                className="col-span-8 row-span-1 overflow-hidden"
               >
+                 <div className="relative">
+                <motion.div 
+                  className="flex gap-8 items-center"
+                  animate={{
+                    x: [0, -1920, 0],
+                  }}
+                  transition={{
+                    duration: 30,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                >
+                  {[...techStacks, ...techStacks].map((tech, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col items-center gap-2 min-w-[60px]"
+                    >
+                      <tech.icon 
+                        size={24} 
+                        className="text-light-300 hover:text-primary-400 transition-colors"
+                      />
+                      <span className="text-xs text-light-300 whitespace-nowrap">
+                        {tech.name}
+                      </span>
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
                 
               </GlassCard>
 
@@ -166,21 +220,11 @@ const Hero: React.FC = () => {
               {/* Tech Stack */}
               <GlassCard 
                 label="Tech stack"
-                className="col-span-12 row-span-2"
+                className="col-span-12 row-span-2 overflow-hidden"
               >
-                <div className="flex gap-4 items-center">
-                  {techStacks.map((tech, index) => (
-                    <img 
-                      key={index}
-                      src={tech.image} 
-                      alt={tech.name}
-                      className="w-8 h-8 object-contain filter brightness-75 hover:brightness-100 transition-all"
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-light-300 mt-4">
-                  Primarily focused on the JavaScript ecosystem, but always eager to explore and learn new technologies.
-                </p>
+              <p className="text-sm text-light-300 mt-4">
+                Primarily focused on the JavaScript ecosystem, but always eager to explore and learn new technologies.
+              </p>
               </GlassCard>
             </motion.div>
           </div>
