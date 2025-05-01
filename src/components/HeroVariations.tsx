@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { 
   ArrowRight, Code, Server, 
   Smartphone, Github, MapPin,
@@ -17,6 +17,7 @@ import AppleMap from './AppleMap';
 import GitHubCalendar from 'react-github-calendar';
  import { Tooltip as MuiTooltip } from '@mui/material';
 import { NowPlaying } from './NowPlaying'; 
+
 
 const techStacks = [
   { name: 'JavaScript', icon: FileJson },
@@ -46,6 +47,64 @@ const techStacks = [
   { name: 'AI-assisted Tools', icon: BotMessageSquare }
 ];
 const Hero: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(true); // Track visibility of the card
+  const [direction, setDirection] = useState<'left' | 'right'>('left'); // Track the direction of the slider
+  const controls = useAnimation(); // Framer Motion animation controls
+  const cardRef = useRef<HTMLDivElement>(null); // Reference to the card element
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting); // Update visibility state
+      },
+      { threshold: 0.1 } // Trigger when 10% of the card is visible
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDirection((prevDirection) => (prevDirection === 'left' ? 'right' : 'left')); // Toggle direction
+    }, 30000); // Adjust duration to match the animation duration (60 seconds here)
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const animateSlider = async () => {
+      if (direction === 'left') {
+        await controls.start({
+          x: -1920, // Slide left
+          transition: {
+            duration: 30, // Match the duration of the animation
+            ease: 'linear',
+          },
+        });
+        setDirection('right'); // Reverse direction after completing the animation
+      } else {
+        await controls.start({
+          x: 0, // Slide right
+          transition: {
+            duration: 30, // Match the duration of the animation
+            ease: 'linear',
+          },
+        });
+        setDirection('left'); // Reverse direction after completing the animation
+      }
+    };
+
+    animateSlider();
+  }, [direction, controls]);
+
   return (
       <section className="min-h-screen relative flex items-center">
         <div className="absolute inset-0">
@@ -140,39 +199,34 @@ const Hero: React.FC = () => {
 
               {/* Now Playing */}
               <GlassCard 
-                icon={Music}
-                label="My Tech stack"
+                icon={Keyboard}
+                label="My most used tech stack"
                 className="col-span-8 row-span-1 overflow-hidden"
               >
-                 <div className="relative">
-                <motion.div 
-                  className="flex gap-8 items-center"
-                  animate={{
-                    x: [0, -1920, 0],
-                  }}
-                  transition={{
-                    duration: 30,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                >
-                  {[...techStacks, ...techStacks].map((tech, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col items-center gap-2 min-w-[60px]"
-                    >
-                      <tech.icon 
-                        size={24} 
-                        className="text-light-300 hover:text-primary-400 transition-colors"
-                      />
-                      <span className="text-xs text-light-300 whitespace-nowrap">
-                        {tech.name}
-                      </span>
-                    </div>
-                  ))}
-                </motion.div>
-              </div>
-                
+                <div className="relative">
+                  <motion.div 
+                    ref={cardRef} // Attach the ref to the card
+                    className="flex gap-8 items-center"
+                    animate={controls} // Use animation controls for smooth transitions
+                    whileHover={{ x: 0 }} // Stops the sliding effect on hover
+                  >
+                    {[...techStacks, ...techStacks].map((tech, index) => (
+                      <motion.div
+                        key={index}
+                        className="flex flex-col items-center gap-2 min-w-[60px]"
+                        whileHover={{ scale: 1.2 }} // Optional: Add a hover effect for individual icons
+                      >
+                        <tech.icon 
+                          size={24} 
+                          className="text-light-300 hover:text-primary-400 transition-colors"
+                        />
+                        <span className="text-xs text-light-300 whitespace-nowrap">
+                          {tech.name}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
               </GlassCard>
 
               {/* GitHub Activity */}

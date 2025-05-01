@@ -1,59 +1,85 @@
 import React, { useEffect, useState } from 'react';
-import { motion, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { throttle } from 'lodash';
 
-interface MouseFollowerProps {
-  position: { x: number; y: number };
-}
+const TRAIL_LENGTH = 10; // Number of trailing circles
+const FADE_OUT_DELAY = 100; // Delay in milliseconds between opacity updates
 
-const MouseFollower: React.FC<MouseFollowerProps> = ({ position }) => {
-  const [visible, setVisible] = useState(false);
-
-  // Smoother spring-based animation for the cursor follower
-  const springConfig = { damping: 25, stiffness: 120 };
-  const springX = useSpring(position.x, springConfig);
-  const springY = useSpring(position.y, springConfig);
+const MouseFollower: React.FC = () => {
+  const [trail, setTrail] = useState<{ x: number; y: number; opacity: number }[]>(
+    Array(TRAIL_LENGTH).fill({ x: 0, y: 0, opacity: 0 }) // Initialize trail with default positions and opacity
+  );
+  const [lastCursor, setLastCursor] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
-    // Small delay before showing the cursor to wait for initial positioning
-    const timeout = setTimeout(() => {
-      setVisible(true);
-    }, 1000);
+    const handleMouseMove = throttle((e: MouseEvent) => {
+      setLastCursor({ x: e.clientX, y: e.clientY }); // Update the last cursor position
+      setTrail((prevTrail) => {
+        const newTrail = [...prevTrail];
+        newTrail.push({ x: e.clientX, y: e.clientY, opacity: 1 }); // Add the new position with full opacity
+        newTrail.shift(); // Remove the oldest position to maintain the trail length
+        return newTrail;
+      });
+    }, 16); // Throttle to ~60fps (16ms)
 
-    return () => clearTimeout(timeout);
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
   }, []);
 
   useEffect(() => {
-    springX.set(position.x);
-    springY.set(position.y);
-  }, [position, springX, springY]);
+    let animationFrameId: number;
 
-  if (!visible) return null;
+    const updateTrail = () => {
+      setTrail((prevTrail) =>
+        prevTrail.map((dot, index) => {
+          const dx = lastCursor.x - dot.x;
+          const dy = lastCursor.y - dot.y;
+
+          return {
+            x: dot.x + dx * 0.2, // Move closer to the cursor
+            y: dot.y + dy * 0.2,
+            opacity: Math.max(dot.opacity - 0.1, 0), // Gradually fade out
+          };
+        })
+      );
+
+      animationFrameId = requestAnimationFrame(updateTrail);
+    };
+
+    animationFrameId = requestAnimationFrame(updateTrail);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [lastCursor]);
 
   return (
     <>
-      {/* Larger outer circle */}
-      <motion.div
-        className="fixed w-12 h-12 rounded-full pointer-events-none z-50 mix-blend-difference hidden sm:block"
-        style={{
-          x: springX,
-          y: springY,
-          translateX: '-50%',
-          translateY: '-50%',
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-        }}
-      />
-      
-      {/* Small inner circle */}
-      <motion.div
-        className="fixed w-3 h-3 rounded-full bg-white pointer-events-none z-50 mix-blend-difference hidden sm:block"
-        style={{
-          x: position.x,
-          y: position.y,
-          translateX: '-50%',
-          translateY: '-50%',
-        }}
-      />
+      {trail.map((point, index) => {
+        const size = 12 - index; // Gradually reduce size for trailing circles
+
+        return (
+          <motion.div
+            key={index}
+            className="fixed rounded-full pointer-events-none z-50"
+            style={{
+              width: size,
+              height: size,
+              backgroundColor: `rgba(255, 255, 255, ${point.opacity})`,
+              translateX: '-50%',
+              translateY: '-50%',
+            }}
+            animate={{
+              x: point.x,
+              y: point.y,
+            }}
+            transition={{
+              type: 'spring', // Use spring for smoother motion
+              stiffness: 500, // Adjust stiffness for responsiveness
+              damping: 30, // Adjust damping for smooth stopping
+            }}
+          />
+        );
+      })}
     </>
   );
 };

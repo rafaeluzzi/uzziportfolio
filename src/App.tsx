@@ -16,19 +16,8 @@ import { AnimatePresence } from 'framer-motion';
 
 function MainContent() {
   const [easterEggActive, setEasterEggActive] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setCursorPosition({ x: e.clientX, y: e.clientY });
-    };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, []);
 
   const activateEasterEgg = () => {
     setEasterEggActive(true);
@@ -40,7 +29,7 @@ function MainContent() {
 
   return (
     <div className="min-h-screen bg-dark-300 text-light-100 overflow-hidden">
-      <MouseFollower position={cursorPosition} />
+    
       
       <main className="relative">
         <Navbar />
