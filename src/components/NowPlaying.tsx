@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Music } from 'lucide-react';
+import { motion } from 'framer-motion';
 import GlassCard from './GlassCard';
 
 interface SpotifyTrack {
@@ -13,6 +14,7 @@ export function NowPlaying() {
   const [track, setTrack] = useState<SpotifyTrack | null>(null);
   const [lastTrackId, setLastTrackId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [playTitle, setPlayTitle] = useState<string>("I'm now playing");
 
   useEffect(() => {
@@ -29,27 +31,23 @@ export function NowPlaying() {
         const lastFmData = await lastFmRes.json();
         const recentTrack = lastFmData.recenttracks?.track?.[0];
 
-        // Set playTitle based on nowplaying status
         setPlayTitle(
           recentTrack && recentTrack['@attr']?.nowplaying === 'true'
             ? "I'm now playing"
             : "Last played song"
         );
 
-        // Exit if no valid track
         if (!recentTrack || !recentTrack.name || !recentTrack.artist?.['#text']) {
           setIsLoading(false);
           return;
         }
 
-        // Create unique track ID for comparison
         const trackId = `${recentTrack.name}-${recentTrack.artist['#text']}`;
-        if (trackId === lastTrackId) return; // Fixed typo: lastndashId -> lastTrackId
+        if (trackId === lastTrackId) return;
 
-        // Track changed, start loading animation
         setIsLoading(true);
+        setProgress(0);
 
-        // Fetch from Spotify
         const trackName = recentTrack.name;
         const artistName = recentTrack.artist['#text'];
         const query = `${trackName} ${artistName}`;
@@ -60,12 +58,18 @@ export function NowPlaying() {
 
         if (spotifyRes.ok) {
           const data = await spotifyRes.json();
-          // Ensure loading animation shows for at least 3 seconds
-          setTimeout(() => {
-            setTrack(data);
-            setLastTrackId(trackId);
-            setIsLoading(false);
-          }, 3000);
+          const interval = setInterval(() => {
+            setProgress((prev) => {
+              const newProgress = prev + Math.random() * 15;
+              if (newProgress >= 100) {
+                clearInterval(interval);
+                setTrack(data);
+                setLastTrackId(trackId);
+                setIsLoading(false);
+              }
+              return newProgress > 100 ? 100 : newProgress;
+            });
+          }, 200);
         } else {
           console.error('Spotify API error:', spotifyRes.status);
           setIsLoading(false);
@@ -77,7 +81,7 @@ export function NowPlaying() {
     }
 
     fetchNowPlaying();
-    const interval = setInterval(fetchNowPlaying, 15000); // Poll every 15s
+    const interval = setInterval(fetchNowPlaying, 15000);
     return () => clearInterval(interval);
   }, [lastTrackId]);
 
@@ -91,23 +95,28 @@ export function NowPlaying() {
         <div
           style={{
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             height: '152px',
-            background: 'radial-gradient(circle, #A855F7, #4F46E5)',
-            borderRadius: '12px',
-            animation: 'pulse 1.5s ease-in-out infinite',
           }}
         >
-          <style>
-            {`
-              @keyframes pulse {
-                0% { transform: scale(0.8); opacity: 0.7; }
-                50% { transform: scale(1); opacity: 1; }
-                100% { transform: scale(0.8); opacity: 0.7; }
-              }
-            `}
-          </style>
+          <motion.div
+            className="w-64 h-1 bg-dark-100 rounded-full overflow-hidden mb-4"
+            initial={{ width: 0 }}
+            animate={{ width: 256 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <motion.div
+              className="h-full bg-gradient-to-r from-primary-500 to-secondary-500"
+              initial={{ width: '0%' }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.1 }}
+            />
+          </motion.div>
+          <div className="text-sm text-light-300 font-mono">
+            {progress < 100 ? 'Updating track...' : 'Track updated!'}
+          </div>
         </div>
       ) : track ? (
         <iframe
