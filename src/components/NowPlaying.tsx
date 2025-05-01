@@ -26,7 +26,7 @@ export function NowPlaying() {
           setTimeout(fetchNowPlaying, 1000);
           return;
         }
-        const lastFmData = await lastFmData.json();
+        const lastFmData = await lastFmRes.json();
         const recentTrack = lastFmData.recenttracks?.track?.[0];
 
         // Set playTitle based on nowplaying status
@@ -37,14 +37,14 @@ export function NowPlaying() {
         );
 
         // Exit if no valid track
-        if (!recentTrack || !recentTrack.name || !recentTrack.artist['#text']) {
+        if (!recentTrack || !recentTrack.name || !recentTrack.artist?.['#text']) {
           setIsLoading(false);
           return;
         }
 
         // Create unique track ID for comparison
         const trackId = `${recentTrack.name}-${recentTrack.artist['#text']}`;
-        if (trackId === lastndashId) return;
+        if (trackId === lastTrackId) return; // Fixed typo: lastndashId -> lastTrackId
 
         // Track changed, start loading animation
         setIsLoading(true);
@@ -77,7 +77,7 @@ export function NowPlaying() {
     }
 
     fetchNowPlaying();
-    const interval = setInterval(fetchNowPlaying, 15000);
+    const interval = setInterval(fetchNowPlaying, 15000); // Poll every 15s
     return () => clearInterval(interval);
   }, [lastTrackId]);
 
@@ -118,7 +118,9 @@ export function NowPlaying() {
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           loading="lazy"
         ></iframe>
-      ) : null}
+      ) : (
+        <div className="text-light-300 text-center">No track playing</div>
+      )}
     </GlassCard>
   );
 }
