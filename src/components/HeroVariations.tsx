@@ -242,7 +242,7 @@ const Hero: React.FC = () => {
               {/* Coding Since */}
               <GlassCard 
                 icon={Keyboard}
-                label="Pushing Code Since 2009"
+                label="Coding Since 2009"
                 className="col-span-4 row-span-2"
               >
                 <ElapsedTime /> {/* Render the ElapsedTime component */}
