@@ -11,11 +11,12 @@ const AppleMap: React.FC = () => {
 
     window.mapkit.init({
       authorizationCallback: (done: (token: string) => void) => {
-done('eyJraWQiOiI1TFJEQkY4N1BMIiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJRM1dWVzgyUVA1IiwiaWF0IjoxNzQ1OTQ4MjQ2LCJvcmlnaW4iOiJlbG9xdWVudC1xdWVpamFkYXMtNTE5M2E1Lm5ldGxpZnkuYXBwIn0.wAGLef5gaYfKcLJLYOb5hFPoT8qiDhqhtfEYeKWZP3XPu1_0dLArO-gahQaqUrwL8_0bEJ1s0suf7GFbJ7tXdg'); 
+        done('eyJraWQiOiI1TFJEQkY4N1BMIiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJRM1dWVzgyUVA1IiwiaWF0IjoxNzQ1OTQ4MjQ2LCJvcmlnaW4iOiJlbG9xdWVudC1xdWVpamFkYXMtNTE5M2E1Lm5ldGxpZnkuYXBwIn0.wAGLef5gaYfKcLJLYOb5hFPoT8qiDhqhtfEYeKWZP3XPu1_0dLArO-gahQaqUrwL8_0bEJ1s0suf7GFbJ7tXdg');
       },
     });
- 
-    const mapCenter = new window.mapkit.Coordinate(35.7915, -78.7811); // Map center: Cary, NC
+
+    // Center the map and radar circle at the same coordinates
+    const mapCenter = new window.mapkit.Coordinate(35.7865, -78.7811); // Downtown Cary Park
     const map = new window.mapkit.Map(mapRef.current, {
       center: mapCenter,
       cameraDistance: 100000, // Approx zoom level 10
@@ -23,10 +24,10 @@ done('eyJraWQiOiI1TFJEQkY4N1BMIiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJ
       colorScheme: 'light',
     });
 
-    // Correct coordinates for Downtown Cary Park
-    const annotationCoords = new window.mapkit.Coordinate(35.7865, -78.7792);
+    // Use the same coordinates for the radar circle
+    const annotationCoords = mapCenter;
 
-    // Create a custom pulsating radar circle using an Annotation at the new coordinates
+    // Create a custom pulsating radar circle using an Annotation at the center
     const pulsatingCircle = new window.mapkit.Annotation(
       annotationCoords,
       () => {
