@@ -36,7 +36,7 @@ const AppleMap: React.FC = () => {
         return div;
       },
       {
-        anchorOffset: new DOMPoint(-20, -20), // Adjust for the size of the radar circle (40px x 40px)
+        anchorOffset: new DOMPoint(0, -20), // Adjust for the size of the radar circle (40px x 40px)
       }
     );
 
