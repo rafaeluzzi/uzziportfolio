@@ -36,7 +36,7 @@ const AppleMap: React.FC = () => {
         return div;
       },
       {
-        anchorOffset: new DOMPoint(0, 0), // Center the annotation
+        anchorOffset: new DOMPoint(-20, -20), // Adjust for the size of the radar circle (40px x 40px)
       }
     );
 
@@ -52,22 +52,21 @@ const AppleMap: React.FC = () => {
         background: radial-gradient(circle, #A855F7, #4F46E5);
         border-radius: 50%;
         position: absolute;
-        transform: translate(-50%, -50%);
         animation: pulse 2s infinite ease-in-out;
         box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
       }
 
       @keyframes pulse {
         0% {
-          transform: translate(-50%, -50%) scale(1);
+          transform: scale(1);
           opacity: 0.7;
         }
         50% {
-          transform: translate(-50%, -50%) scale(1.5);
+          transform: scale(1.5);
           opacity: 0.3;
         }
         100% {
-          transform: translate(-50%, -50%) scale(1);
+          transform: scale(1);
           opacity: 0.7;
         }
       }
