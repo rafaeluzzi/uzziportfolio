@@ -250,11 +250,11 @@ const Hero: React.FC = () => {
 
               {/* Tech Stack */}
               <GlassCard 
-                label="Tech Stack"
+                label="Grok"
                 className="col-span-12 row-span-2 overflow-hidden"
               >
               <p className="text-sm text-light-300 mt-4">
-                Primarily focused on the JavaScript ecosystem, but always eager to explore and learn new technologies.
+                I need ideas for this card
               </p>
               </GlassCard>
 
