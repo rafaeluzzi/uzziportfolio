@@ -15,7 +15,7 @@ export function NowPlaying() {
   const [lastTrackId, setLastTrackId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [playTitle, setPlayTitle] = useState<string>("I'm now playing");
+  const [playTitle, setPlayTitle] = useState<string>("I'm Now Playing");
 
   useEffect(() => {
     async function fetchNowPlaying() {
@@ -33,8 +33,8 @@ export function NowPlaying() {
 
         setPlayTitle(
           recentTrack && recentTrack['@attr']?.nowplaying === 'true'
-            ? "I'm now playing"
-            : "Last played song"
+            ? "I'm Now Playing"
+            : "Last Played Track"
         );
 
         if (!recentTrack || !recentTrack.name || !recentTrack.artist?.['#text']) {
@@ -115,7 +115,7 @@ export function NowPlaying() {
             />
           </motion.div>
           <div className="text-sm text-light-300 font-mono">
-            {progress < 100 ? 'Updating track...' : 'Track updated!'}
+            {progress < 100 ? 'Track updating...' : 'Track updated!'}
           </div>
         </div>
       ) : track ? (

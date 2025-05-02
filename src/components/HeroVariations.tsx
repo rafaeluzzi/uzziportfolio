@@ -3,7 +3,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { 
   ArrowRight, Code, Server, 
   Smartphone, Github, MapPin,
-  Twitter, Globe, Music,
+  Twitter, Globe,
   Keyboard, 
   FileJson, FileCode, Blocks, 
   LayoutTemplate, Monitor, 
@@ -11,13 +11,13 @@ import {
   Flame, Laptop,
   Bot, Container, 
   GitBranch, Upload,
-  Boxes, Binary,BotMessageSquare} from 'lucide-react';
+  Boxes, Binary,BotMessageSquare,Cpu} from 'lucide-react';
 import GlassCard from './GlassCard';
 import AppleMap from './AppleMap';
 import GitHubCalendar from 'react-github-calendar';
  import { Tooltip as MuiTooltip } from '@mui/material';
 import { NowPlaying } from './NowPlaying'; 
-
+import ElapsedTime from './ElapsedTime'; // Import the new component
 
 const techStacks = [
   { name: 'JavaScript', icon: FileJson },
@@ -47,29 +47,12 @@ const techStacks = [
   { name: 'AI-assisted Tools', icon: BotMessageSquare }
 ];
 const Hero: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(true); // Track visibility of the card
   const [direction, setDirection] = useState<'left' | 'right'>('left'); // Track the direction of the slider
   const controls = useAnimation(); // Framer Motion animation controls
   const cardRef = useRef<HTMLDivElement>(null); // Reference to the card element
+ 
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting); // Update visibility state
-      },
-      { threshold: 0.1 } // Trigger when 10% of the card is visible
-    );
-
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
-    }
-
-    return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current);
-      }
-    };
-  }, []);
+ 
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -175,7 +158,7 @@ const Hero: React.FC = () => {
               {/* Location */}
               <GlassCard 
                 icon={MapPin}
-                label="Location"
+                label="My Location"
                 className="col-span-4 row-span-2"
               >
                 <div className="relative w-full h-full rounded-lg overflow-hidden">
@@ -197,18 +180,20 @@ const Hero: React.FC = () => {
                 </div>
               </GlassCard>
 
-              {/* Now Playing */}
+             
+              {/* Tech Stack Slider */}
               <GlassCard 
-                icon={Keyboard}
-                label="My most used tech stack"
+                icon={Cpu}
+                label="Tech Stack Behind My Work"
                 className="col-span-8 row-span-1 overflow-hidden"
               >
                 <div className="relative">
                   <motion.div 
                     ref={cardRef} // Attach the ref to the card
-                    className="flex gap-8 items-center"
+                    className="flex gap-8 items-center cursor-grab" // Add cursor styling for drag interaction
                     animate={controls} // Use animation controls for smooth transitions
-                    whileHover={{ x: 0 }} // Stops the sliding effect on hover
+                    drag="x" // Enable horizontal dragging
+                    dragConstraints={{ left: -1920, right: 0 }} // Set drag boundaries
                   >
                     {[...techStacks, ...techStacks].map((tech, index) => (
                       <motion.div
@@ -217,7 +202,7 @@ const Hero: React.FC = () => {
                         whileHover={{ scale: 1.2 }} // Optional: Add a hover effect for individual icons
                       >
                         <tech.icon 
-                          size={24} 
+                          size={22} 
                           className="text-light-300 hover:text-primary-400 transition-colors"
                         />
                         <span className="text-xs text-light-300 whitespace-nowrap">
@@ -233,7 +218,7 @@ const Hero: React.FC = () => {
            
 <GlassCard
   icon={Github}
-  label="Github activity"
+  label="Github Activity"
   className="col-span-8 row-span-2 relative"
 >
   <GitHubCalendar
@@ -254,32 +239,26 @@ const Hero: React.FC = () => {
 </GlassCard>
 
 
-              {/* Typing Speed */}
+              {/* Coding Since */}
               <GlassCard 
                 icon={Keyboard}
-                label="Typing speed"
+                label="Pushing Code Since 2009"
                 className="col-span-4 row-span-2"
               >
-                <div className="flex flex-col items-center justify-center h-full">
-                  <span className="text-4xl font-bold text-light-100">140</span>
-                  <span className="text-sm text-light-300">wpm</span>
-                  <div className="flex gap-2 mt-2 text-xs text-light-300">
-                    <span>15s</span>
-                    <span>100%</span>
-                    <span>ID</span>
-                  </div>
-                </div>
+                <ElapsedTime /> {/* Render the ElapsedTime component */}
               </GlassCard>
 
               {/* Tech Stack */}
               <GlassCard 
-                label="Tech stack"
+                label="Tech Stack"
                 className="col-span-12 row-span-2 overflow-hidden"
               >
               <p className="text-sm text-light-300 mt-4">
                 Primarily focused on the JavaScript ecosystem, but always eager to explore and learn new technologies.
               </p>
               </GlassCard>
+
+              
             </motion.div>
           </div>
         </div>
