@@ -13,7 +13,6 @@ import {
   GitBranch, Upload,
   Boxes, Binary,BotMessageSquare,Cpu} from 'lucide-react';
 import GlassCard from './GlassCard';
-import GlassCardAi from './GlassCardAi';
 import AppleMap from './AppleMap';
 import GitHubCalendar from 'react-github-calendar';
  import { Tooltip as MuiTooltip } from '@mui/material';
@@ -52,7 +51,6 @@ const Hero: React.FC = () => {
   const [direction, setDirection] = useState<'left' | 'right'>('left'); // Track the direction of the slider
   const controls = useAnimation(); // Framer Motion animation controls
   const cardRef = useRef<HTMLDivElement>(null); // Reference to the card element
-  const [hasLaunched, setHasLaunched] = useState(false); // Track if the project has launched
  
 
  
@@ -92,7 +90,7 @@ const Hero: React.FC = () => {
   }, [direction, controls]);
 
   return (
-      <section className="min-h-screen relative flex items-center mb-[200px]">
+      <section className="min-h-screen relative flex items-center">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-secondary-500/20 via-transparent to-dark-300/20"></div>
           <div className="absolute right-[15%] top-1/4 w-96 h-96 bg-secondary-600/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
@@ -156,7 +154,7 @@ const Hero: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="rightbento grid grid-cols-12 auto-rows-[100px] gap-4 relative"
+              className="grid grid-cols-12 auto-rows-[100px] gap-4"
             >
               {/* Location */}
               <GlassCard 
@@ -251,18 +249,13 @@ const Hero: React.FC = () => {
                 <ElapsedTime /> {/* Render the ElapsedTime component */}
               </GlassCard>
 
-              {/* AI bot */}
-             
-              <GlassCardAi  
-                icon={BotMessageSquare}
+              {/* Tech Stack */}
+              <GlassCard 
                 label="Need a dev? Let AI sketch your project"
-                isExpanded={hasLaunched}
+                className="col-span-12 row-span-2 overflow-hidden"
               >
-                
-                  {/* Pass the onLaunch callback */}
-                  <DevMatchCard onLaunch={(hasLaunched) => setHasLaunched(hasLaunched)} />
-                
-              </GlassCardAi>
+              <DevMatchCard />
+              </GlassCard>
 
               
             </motion.div>

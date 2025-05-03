@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { DivideIcon as LucideIcon } from 'lucide-react';
 
 interface GlassCardProps {
-  icon?: LucideIcon;
+  icon?: typeof LucideIcon;
   label?: string;
   className?: string;
   children?: React.ReactNode;
