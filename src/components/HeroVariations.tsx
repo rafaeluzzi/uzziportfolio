@@ -181,7 +181,7 @@ const Hero: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="rightbento grid grid-cols-12 auto-rows-[100px] gap-4 relative "
+              className="rightbento grid grid-cols-12 auto-rows-[100px] gap-2 relative "
             >
               {/* Location */}
               <GlassCard 
