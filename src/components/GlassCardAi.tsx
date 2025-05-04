@@ -43,7 +43,7 @@ const GlassCardAi: React.FC<GlassCardAiProps> = ({ icon: Icon, label, className 
         height: '216px', // Set initial height
         width: '100%', // Full width
         position: 'absolute', // Anchor the card
-        bottom: -233, // Fix it to the bottom
+        bottom: -225, // Fix it to the bottom
       }}
     >
       {(Icon || label) && (
