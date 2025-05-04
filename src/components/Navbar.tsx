@@ -1,15 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, FileText, Briefcase, Mail } from 'lucide-react';
+import hitSfx from '../lib/sfx/hit.mp3'; // Adjust path if needed
+import rotateSfx from '../lib/sfx/rotate.wav'; // Adjust path if needed
+import clearSfx from '../lib/sfx/clear.wav'; // Adjust path if needed
 
 const Navbar = () => {
-  const [isVisible, setIsVisible] = useState(false); // Start hidden
+  const [isVisible, setIsVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [shapeIndex, setShapeIndex] = useState(() =>
     Math.floor(Math.random() * 4)
   );
+  const [rotation, setRotation] = useState(0); // 0, 1, 2, 3
+  const [isFalling, setIsFalling] = useState(false);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const hideDelayTimeout = useRef<NodeJS.Timeout | null>(null);
+  const hitAudioRef = useRef<HTMLAudioElement | null>(null);
+  const rotateAudioRef = useRef<HTMLAudioElement | null>(null);
+  const clearAudioRef = useRef<HTMLAudioElement | null>(null);
+  const hasPlayedHit = useRef(false);
 
   const navLinks = [
     { name: 'Home', href: '#home', icon: Home },
@@ -23,13 +32,24 @@ const Navbar = () => {
     [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }],
     [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }],
     [{ x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }],
-    // Z shape
     [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 1 }],
-    // S shape
     [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }],
   ];
 
   const blockSize = 44;
+
+  // Rotate a shape's blocks 90deg clockwise n times
+  function rotateShape(blocks, times) {
+    let rotated = blocks.map(b => ({ ...b }));
+    for (let t = 0; t < times; t++) {
+      rotated = rotated.map(({ x, y }) => ({ x: y, y: -x }));
+      // Normalize so all x/y >= 0
+      const minX = Math.min(...rotated.map(b => b.x));
+      const minY = Math.min(...rotated.map(b => b.y));
+      rotated = rotated.map(b => ({ x: b.x - minX, y: b.y - minY }));
+    }
+    return rotated;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,9 +57,8 @@ const Navbar = () => {
       if (hideDelayTimeout.current) clearTimeout(hideDelayTimeout.current);
 
       hideDelayTimeout.current = setTimeout(() => {
-        const shouldShow = currentScrollY < lastScrollY || currentScrollY < 100;
+        const shouldShow = currentScrollY < lastScrollY;
         if (shouldShow) {
-          // Only change shape if it was hidden before
           if (!isVisible) {
             setShapeIndex(prev => {
               let next;
@@ -48,6 +67,7 @@ const Navbar = () => {
               } while (next === prev);
               return next;
             });
+            setRotation(0); // Reset rotation on new shape
           }
           setIsVisible(true);
         } else {
@@ -63,17 +83,50 @@ const Navbar = () => {
       if (hideDelayTimeout.current) clearTimeout(hideDelayTimeout.current);
       if (hideTimeout.current) clearTimeout(hideTimeout.current);
     };
-    // eslint-disable-next-line
   }, [lastScrollY, isVisible, tetrisShapes.length]);
 
   useEffect(() => {
     // Show navbar with animation on first load
-    const showTimeout = setTimeout(() => setIsVisible(true), 0);
+    const showTimeout = setTimeout(() => setIsVisible(true), 4000);
     return () => clearTimeout(showTimeout);
   }, []);
 
+  // Track falling state for keyboard control
+  useEffect(() => {
+    if (isVisible) setIsFalling(true);
+  }, [isVisible, shapeIndex]);
+
+  useEffect(() => {
+    if (!isFalling) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        setRotation(r => (r + 3) % 4);
+        if (rotateAudioRef.current) {
+          rotateAudioRef.current.currentTime = 0;
+          rotateAudioRef.current.play();
+        }
+      } else if (e.key === 'ArrowRight') {
+        setRotation(r => (r + 1) % 4);
+        if (rotateAudioRef.current) {
+          rotateAudioRef.current.currentTime = 0;
+          rotateAudioRef.current.play();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFalling]);
+
+  useEffect(() => {
+    if (!isVisible && clearAudioRef.current) {
+      clearAudioRef.current.currentTime = 0;
+      clearAudioRef.current.play();
+    }
+  }, [isVisible]);
+
   const selectedShape = tetrisShapes[shapeIndex];
-  const maxY = Math.max(...selectedShape.map(b => b.y));
+  const rotatedShape = rotateShape(selectedShape, rotation);
+  const maxY = Math.max(...rotatedShape.map(b => b.y));
   const shapeOffset = blockSize * (3 - maxY);
 
   return (
@@ -83,7 +136,28 @@ const Navbar = () => {
       animate={{
         y: isVisible ? shapeOffset : -200,
         opacity: isVisible ? 1 : 0,
-        transition: { type: 'spring', stiffness: 80, damping: 18 }
+        transition: { type: 'spring', stiffness: 20, damping: 18 }
+      }}
+      onUpdate={latest => {
+        if (
+          isVisible &&
+          !hasPlayedHit.current &&
+          typeof latest.y === 'number' &&
+          Math.abs(latest.y - shapeOffset) < 6 // Allow for spring overshoot
+        ) {
+          hasPlayedHit.current = true;
+          if (hitAudioRef.current) {
+            hitAudioRef.current.currentTime = 0;
+            hitAudioRef.current.play();
+          }
+        }
+        if (!isVisible) {
+          hasPlayedHit.current = false;
+        }
+      }}
+      onAnimationComplete={() => {
+        setIsFalling(false);
+        // No need to play sound here anymore
       }}
       className="fixed bottom-4 left-0 z-50"
       style={{
@@ -93,16 +167,18 @@ const Navbar = () => {
         pointerEvents: 'none',
       }}
     >
+      <audio ref={hitAudioRef} src={hitSfx} preload="auto" />
+      <audio ref={rotateAudioRef} src={rotateSfx} preload="auto" />
+      <audio ref={clearAudioRef} src={clearSfx} preload="auto" />
       <div className="relative w-full h-full">
         <AnimatePresence>
           {isVisible &&
-            selectedShape.map((block, index) => {
+            rotatedShape.map((block, index) => {
               const link = navLinks[index];
               if (!link) return null;
               const Icon = link.icon;
-              // Calculate explosion direction for each block
-              const x = (Math.random() - 0.5) * 180; // more random left/right
-              const y = 220 + Math.random() * 80;    // always down, with some variation
+              const x = (Math.random() - 0.5) * 180;
+              const y = 220 + Math.random() * 80;
 
               return (
                 <motion.a
