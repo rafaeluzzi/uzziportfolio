@@ -39,7 +39,7 @@ const Navbar = () => {
   const blockSize = 44;
 
   // Rotate a shape's blocks 90deg clockwise n times
-  function rotateShape(blocks, times) {
+  function rotateShape(blocks: { x: number; y: number }[], times: number) {
     let rotated = blocks.map(b => ({ ...b }));
     for (let t = 0; t < times; t++) {
       rotated = rotated.map(({ x, y }) => ({ x: y, y: -x }));
@@ -170,6 +170,8 @@ const Navbar = () => {
       <audio ref={hitAudioRef} src={hitSfx} preload="auto" />
       <audio ref={rotateAudioRef} src={rotateSfx} preload="auto" />
       <audio ref={clearAudioRef} src={clearSfx} preload="auto" />
+      {/* Arrow icons in top-right corner while falling */}
+      
       <div className="relative w-full h-full">
         <AnimatePresence>
           {isVisible &&
