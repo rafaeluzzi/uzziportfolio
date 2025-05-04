@@ -1,15 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, FileText, Briefcase, Mail } from 'lucide-react';
 
 const Navbar = () => {
-  const [isVisible, setIsVisible] = useState(false); // Start hidden
+  const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [shapeIndex, setShapeIndex] = useState(() =>
     Math.floor(Math.random() * 4)
   );
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const hideDelayTimeout = useRef<NodeJS.Timeout | null>(null);
+  const pendingShapeChange = useRef(false);
 
   const navLinks = [
     { name: 'Home', href: '#home', icon: Home },
@@ -23,10 +24,6 @@ const Navbar = () => {
     [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }],
     [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }],
     [{ x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }],
-    // Z shape
-    [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 1 }],
-    // S shape
-    [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }],
   ];
 
   const blockSize = 44;
@@ -66,46 +63,38 @@ const Navbar = () => {
     // eslint-disable-next-line
   }, [lastScrollY, isVisible, tetrisShapes.length]);
 
-  useEffect(() => {
-    // Show navbar with animation on first load
-    const showTimeout = setTimeout(() => setIsVisible(true), 0);
-    return () => clearTimeout(showTimeout);
-  }, []);
-
   const selectedShape = tetrisShapes[shapeIndex];
   const maxY = Math.max(...selectedShape.map(b => b.y));
   const shapeOffset = blockSize * (3 - maxY);
 
   return (
-    <motion.div
-      key={shapeIndex}
-      initial={{ y: -400, opacity: 0 }}
-      animate={{
-        y: isVisible ? shapeOffset : -200,
-        opacity: isVisible ? 1 : 0,
-        transition: { type: 'spring', stiffness: 80, damping: 18 }
-      }}
-      className="fixed bottom-4 left-0 z-50"
-      style={{
-        width: blockSize * 3,
-        height: blockSize * 4,
-        padding: 8,
-        pointerEvents: 'none',
-      }}
-    >
-      <div className="relative w-full h-full">
-        <AnimatePresence>
-          {isVisible &&
-            selectedShape.map((block, index) => {
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          key={shapeIndex}
+          initial={{ y: -150, opacity: 0 }}
+          animate={{ y: shapeOffset, opacity: 1 }}
+          exit={{ y: -150, opacity: 0 }}
+          transition={{
+            type: 'spring',
+            stiffness: 80,
+            damping: 18,
+          }}
+          className="fixed bottom-4 left-0 z-50"
+          style={{
+            width: blockSize * 3,
+            height: blockSize * 4,
+            padding: 8,
+            pointerEvents: 'none',
+          }}
+        >
+          <div className="relative w-full h-full">
+            {selectedShape.map((block, index) => {
               const link = navLinks[index];
               if (!link) return null;
               const Icon = link.icon;
-              // Calculate explosion direction for each block
-              const x = (Math.random() - 0.5) * 180; // more random left/right
-              const y = 220 + Math.random() * 80;    // always down, with some variation
-
               return (
-                <motion.a
+                <a
                   key={`${link.name}-${shapeIndex}`}
                   href={link.href}
                   className="absolute flex items-center justify-center bg-secondary-900 border border-dark-100 rounded text-light-300 hover:text-primary-400 transition-colors"
@@ -116,30 +105,15 @@ const Navbar = () => {
                     top: block.y * blockSize,
                     pointerEvents: 'auto',
                   }}
-                  initial={{ scale: 1, opacity: 1, x: 0, y: 0 }}
-                  animate={{ scale: 1, opacity: 1, x: 0, y: 0 }}
-                  exit={{
-                    scale: 0.7,
-                    opacity: 0,
-                    x,
-                    y,
-                    rotate: 30 + Math.random() * 60,
-                    transition: { duration: 0.5, ease: 'easeIn' },
-                  }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 400,
-                    damping: 24,
-                    delay: 0.08 * index,
-                  }}
                 >
                   <Icon size={22} />
-                </motion.a>
+                </a>
               );
             })}
-        </AnimatePresence>
-      </div>
-    </motion.div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

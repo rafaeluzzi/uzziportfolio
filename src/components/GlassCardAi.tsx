@@ -23,11 +23,14 @@ const GlassCardAi: React.FC<GlassCardAiProps> = ({ icon: Icon, label, className 
         ease: 'power2.inOut',
       });
       if (isExpanded) {
-        gsap.to(window, {
-          scrollTo: { y: 400 }, // Scroll to the top of the page
-          duration: 0.8,
-          ease: 'power2.inOut',
-        });
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+        if (isMobile) {
+          gsap.to(window, {
+            scrollTo: { y: 450 }, // Scroll to the top of the page
+            duration: 0.8,
+            ease: 'power2.inOut',
+          });
+        }
       }
     }
   }, [isExpanded]);

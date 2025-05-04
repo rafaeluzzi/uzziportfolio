@@ -1,4 +1,12 @@
+/// <reference types="mapkit" />
+
 import React, { useEffect, useRef } from 'react';
+
+declare global {
+  interface Window {
+    mapkit: any;
+  }
+}
 
 const AppleMap: React.FC = () => {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -93,3 +101,5 @@ const AppleMap: React.FC = () => {
 };
 
 export default AppleMap;
+
+export {};

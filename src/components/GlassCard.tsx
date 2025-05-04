@@ -10,8 +10,7 @@ interface GlassCardProps {
   href?: string;
 }
 
-const GlassCard: React.FC<GlassCardProps> = ({ icon: Icon, label, className = "", children, href }) => {
-  const CardWrapper = href ? 'a' : 'div';
+const GlassCard: React.FC<GlassCardProps> = ({ icon: Icon, label, className = "", children }) => {
   
   return (
     <motion.div

@@ -22,8 +22,6 @@ import ElapsedTime from './ElapsedTime';
 import DevMatchCard from './DevMatchCard';
 
 const techStacks = [
-  { name: 'JavaScript', icon: FileJson },
-  { name: 'TypeScript', icon: FileCode },
   { name: 'React', icon: Blocks },
   { name: 'React Native', icon: Smartphone },
   { name: 'Next.js', icon: LayoutTemplate },
@@ -38,7 +36,9 @@ const techStacks = [
   { name: 'Firebase', icon: Flame },
   { name: 'AWS', icon: Cloud },
   { name: 'REST APIs', icon: Server },
+  { name: 'JavaScript', icon: FileJson },
   { name: 'Python', icon: FileCode },
+  { name: 'TypeScript', icon: FileCode },
   { name: 'Rails', icon: Blocks },
   { name: 'Docker', icon: Container },
   { name: 'GitHub Actions', icon: GitBranch },
@@ -92,14 +92,14 @@ const Hero: React.FC = () => {
   }, [direction, controls]);
 
   return (
-      <section className="min-h-screen relative flex items-center mb-[200px]">
+      <section className="min-h-screen relative flex items-center mb-[200px] md:mb-0">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-secondary-500/20 via-transparent to-dark-300/20"></div>
           <div className="absolute right-[15%] top-1/4 w-96 h-96 bg-secondary-600/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
           <div className="absolute left-[10%] bottom-1/3 w-96 h-96 bg-secondary-600/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
         </div>
         
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 relative z-10 mt-20 md:mt-[-216px]">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left column: Text content */}
             <motion.div
@@ -156,7 +156,7 @@ const Hero: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="rightbento grid grid-cols-12 auto-rows-[100px] gap-4 relative"
+              className="rightbento grid grid-cols-12 auto-rows-[100px] gap-4 relative "
             >
               {/* Location */}
               <GlassCard 
