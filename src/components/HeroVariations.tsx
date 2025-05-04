@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, Code, Server, 
   Smartphone, Github, MapPin,
@@ -53,9 +53,7 @@ const Hero: React.FC = () => {
   const controls = useAnimation(); // Framer Motion animation controls
   const cardRef = useRef<HTMLDivElement>(null); // Reference to the card element
   const [hasLaunched, setHasLaunched] = useState(false); // Track if the project has launched
- 
-
- 
+  const [showUzzi, setShowUzzi] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -91,6 +89,13 @@ const Hero: React.FC = () => {
     animateSlider();
   }, [direction, controls]);
 
+  /*useEffect(() => {
+    const interval = setInterval(() => {
+      setShowUzzi((prev) => !prev);
+    }, 2500); // Change every 2.5 seconds
+    return () => clearInterval(interval);
+  }, []);*/
+
   return (
       <section className="min-h-screen relative flex items-center mb-[200px] md:mb-0">
         <div className="absolute inset-0">
@@ -114,9 +119,29 @@ const Hero: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <span className="text-light-100">Hi, I'm Rafael.</span>
+                <span className="text-light-100">
+                  Hi, I'm{' '}
+                  <span
+                    className="inline-block relative align-middle min-w-[175px] h-[1.1em] overflow-hidden"
+                  >
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={showUzzi ? 'Uzzi' : 'Rafael'}
+                        initial={{ y: 30, opacity: 0, position: 'absolute', left: 0, right: 0 }}
+                        animate={{ y: 0, opacity: 1, position: 'absolute', left: 0, right: 0 }}
+                        exit={{ y: -30, opacity: 0, position: 'absolute', left: 0, right: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="text-gradient w-full text-center block"
+                        style={{ fontSize: 'inherit', lineHeight: 'inherit',textAlign: 'left' }}
+                      >
+                        {showUzzi ? 'Uzzi' : 'Rafael'}
+                      </motion.span>
+                    </AnimatePresence>
+                  </span>
+                  
+                </span>
                 <br />
-                <span className="text-gradient">A Full-Stack</span>
+                <span className="text-gradient">Full-Stack</span>
                 <br />
                 <span className="text-light-100">Software Engineer.</span>
               </motion.h1>
