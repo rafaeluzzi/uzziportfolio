@@ -48,8 +48,10 @@ const GlassCardAi: React.FC<GlassCardAiProps> = ({ icon: Icon, label, className 
     >
       {(Icon || label) && (
         <div className="flex items-center gap-2 mb-2">
-          {Icon && <Icon size={20} className="text-primary-400" />}
-          {label && <span className="text-light-100 text-sm font-medium">{label}</span>}
+          {Icon && <Icon size={20} className={`text-primary-400 ${
+            label === 'Select your project type to get started.' ? 'animate-pulse' : ''
+              }`} />}
+          {label && <span className={`text-light-100 text-sm font-medium`}>{label}</span>}
         </div>
       )}
       {children}

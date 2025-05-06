@@ -16,7 +16,7 @@ import GlassCard from './GlassCard';
 import GlassCardAi from './GlassCardAi';
 import AppleMap from './AppleMap';
 import GitHubCalendar from 'react-github-calendar';
- import { Tooltip as MuiTooltip } from '@mui/material';
+import { Tooltip as MuiTooltip } from '@mui/material';
 import { NowPlaying } from './NowPlaying'; 
 import ElapsedTime from './ElapsedTime';
 import DevMatchCard from './DevMatchCard';
@@ -54,6 +54,7 @@ const Hero: React.FC = () => {
   const cardRef = useRef<HTMLDivElement>(null); // Reference to the card element
   const [hasLaunched, setHasLaunched] = useState(false); // Track if the project has launched
   const [showUzzi, setShowUzzi] = useState(false);
+  const [devMatchHovered, setDevMatchHovered] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -166,14 +167,14 @@ const Hero: React.FC = () => {
                 </div>
               </motion.div>
               
-              <motion.button
+              {/* <motion.button
                 className="px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-full font-medium inline-flex items-center transition-transform"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 View Projects
                 <ArrowRight className="ml-2" size={18} />
-              </motion.button>
+              </motion.button> */}
             </motion.div>
 
             {/* Right column: Bento grid */}
@@ -280,13 +281,17 @@ const Hero: React.FC = () => {
              
               <GlassCardAi  
                 icon={BotMessageSquare}
-                label="Need a dev? Let AI sketch your project"
+                label={
+                  devMatchHovered
+                    ? "Select your project type to get started."
+                    : "Need a dev? Let AI help you explain it to me"
+                }
                 isExpanded={hasLaunched}
               >
-                
-                  {/* Pass the onLaunch callback */}
-                  <DevMatchCard onLaunch={(hasLaunched) => setHasLaunched(hasLaunched)} />
-                
+                <DevMatchCard
+                  onLaunch={(hasLaunched) => setHasLaunched(hasLaunched)}
+                  setHovered={setDevMatchHovered}
+                />
               </GlassCardAi>
 
               

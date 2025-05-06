@@ -1,16 +1,31 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Smartphone, Monitor, Globe, Bot } from 'lucide-react';
+import { Smartphone, Monitor, Globe, Bot, Wrench, Brain, Rocket, Briefcase, ShoppingCart } from 'lucide-react';
+import DevInquiryWizard from './DevInquiryWizard';
+import { Tooltip as MuiTooltip } from '@mui/material';
+
 
 // Update the onLaunch prop type to accept a boolean parameter
 interface DevMatchCardProps {
   onLaunch: (hasLaunched: boolean) => void;
+  setHovered: (hovered: boolean) => void; // Add this line
 }
 
-const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch }) => {
+const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch, setHovered }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [hasLaunched, setHasLaunched] = useState(false);
+
+  const projectTypes = [
+    { label: 'Prototype MVP', icon: Rocket, description: 'Build a lean version to validate your idea' },
+    { label: 'iOS/Android Mobile App', icon: Smartphone, description: 'Build a native or hybrid app for iOS/Android' },
+    { label: 'SaaS Software', icon: Monitor, description: 'Develop a software-as-a-service product with modern UX and workflows' },
+    { label: 'Next-Gen Website', icon: Globe, description: 'Design a modern, high-impact marketing site' },
+    { label: 'Existing Project', icon: Wrench, description: 'Resolve bugs or enhance existing software' },
+    { label: 'AI or Automation', icon: Brain, description: 'Integrate AI, chatbots, or smart workflows' },
+    { label: 'Internal Tooling', icon: Briefcase, description: 'Automate internal workflows or dashboards' },
+    { label: 'Ecommerce or Booking', icon: ShoppingCart, description: 'Enable online sales or service scheduling' },
+  ];
 
   const handleIconClick = (type: string) => {
     setSelectedType(type);
@@ -34,8 +49,14 @@ const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch }) => {
         className={`relative ${
           hasLaunched ? 'h-full' : 'h-full'
         } bg-dark-300 rounded-lg p-6 shadow-lg overflow-hidden cursor-pointer border border-dark-100 transition-all`}
-        onHoverStart={() => !hasLaunched && setIsHovered(true)}
-        onHoverEnd={() => !hasLaunched && setIsHovered(false)}
+        onHoverStart={() => {
+          if (!hasLaunched) setIsHovered(true);
+          setHovered(true); // Notify parent
+        }}
+        onHoverEnd={() => {
+          if (!hasLaunched) setIsHovered(false);
+          setHovered(false); // Notify parent
+        }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
         
@@ -74,27 +95,50 @@ const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch }) => {
               transition={{ duration: 0.4, ease: 'easeInOut' }}
               className="flex flex-col items-center justify-center h-full w-full text-center"
             >
-              <h2 className="text-lg md:text-xl font-bold text-primary-400 mb-4">
-                Select your project type to get started.
-              </h2>
-              <div className="flex space-x-6">
-                {['Smartphone', 'Monitor', 'Globe'].map((type) => (
-                  <motion.div
-                    key={type}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 1.3 }}
-                    onClick={() => handleIconClick(type)}
-                    className="w-12 h-12 flex items-center justify-center rounded-full bg-dark-100 text-primary-400 hover:text-primary-500 transition-all"
-                  >
-                    {type === 'Smartphone' && <Smartphone size={24} />}
-                    {type === 'Monitor' && <Monitor size={24} />}
-                    {type === 'Globe' && <Globe size={24} />}
-                  </motion.div>
-                ))}
-              </div>
-              <p className="mt-4 text-sm text-light-300">
+             
+<div className="flex flex-wrap gap-4 justify-center">
+  {projectTypes.map(({ label, icon: Icon, description }) => (
+    <div key={label} className="w-14 flex flex-col items-center justify-center">
+      <MuiTooltip
+        title={description}
+        arrow
+        placement="top"
+        slotProps={{
+          tooltip: {
+            sx: {
+              bgcolor: '#23243a', // match your bg-dark-300
+              color: '#e5e7ef',   // match your text-light-300
+              fontSize: 13,
+              borderRadius: 2,
+              boxShadow: 3,
+              px: 2,
+              py: 1,
+              letterSpacing: 0.1,
+            },
+          },
+          arrow: {
+            sx: {
+              color: '#23243a',
+            },
+          },
+        }}
+      >
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 1.2 }}
+          onClick={() => handleIconClick(label)}
+          className="w-14 h-14 flex flex-col items-center justify-center rounded-full bg-dark-100 text-primary-400 hover:text-primary-500 transition-all cursor-pointer"
+        >
+          <Icon size={24} />
+        </motion.div>
+      </MuiTooltip>
+      <span className="text-[10px] mt-1 text-center">{label}</span>
+    </div>
+  ))}
+</div>
+             { /*<p className="mt-4 text-sm text-light-300">
                 AI will ask a few questions and craft a custom brief.
-              </p>
+              </p>*/}
             </motion.div>
           )}
       
@@ -113,7 +157,8 @@ const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch }) => {
               <h2 className="text-lg md:text-xl font-bold text-primary-400 mb-4">
                 {selectedType} selected!
               </h2>
-              <p className="mt-4 text-sm text-light-300">Loading wizard...</p>
+              <DevInquiryWizard projectType={selectedType || ''} onClose={handleClose} />
+
 
               {/* Close Button */}
               <button

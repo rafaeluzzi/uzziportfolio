@@ -132,7 +132,7 @@ const Navbar = () => {
   return (
     <motion.div
       key={shapeIndex}
-      initial={{ y: -400, opacity: 0 }}
+      initial={{ y: -800, opacity: 0 }}
       animate={{
         y: isVisible ? shapeOffset : -200,
         opacity: isVisible ? 1 : 0,
