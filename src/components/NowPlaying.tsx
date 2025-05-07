@@ -23,7 +23,7 @@ export function NowPlaying() {
     if (!parentRef.current) return;
     const handleResize = () => {
       if (parentRef.current) {
-        setIframeWidth(parentRef.current.offsetWidth);
+        setIframeWidth(Math.max(224, parentRef.current.offsetWidth));
       }
     };
     handleResize(); // set initial width
