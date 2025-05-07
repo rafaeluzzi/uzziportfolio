@@ -125,6 +125,7 @@ const Navbar = () => {
 
   const handleTouchRotate = (e: React.TouchEvent) => {
     e.preventDefault();
+    if (!isFalling) return; // Prevent rotation if already landed
     setRotation(r => (r + 1) % 4);
     if (rotateAudioRef.current) {
       rotateAudioRef.current.currentTime = 0;
