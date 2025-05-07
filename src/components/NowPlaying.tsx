@@ -18,6 +18,9 @@ export function NowPlaying() {
   const [playTitle, setPlayTitle] = useState<string>("I'm Now Playing");
   const [iframeWidth, setIframeWidth] = useState(200);
   const parentRef = useRef<HTMLDivElement>(null);
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches
+  );
 
   useEffect(() => {
     if (!parentRef.current) return;
@@ -35,6 +38,13 @@ export function NowPlaying() {
     return () => {
       resizeObserver.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const handler = () => setIsDesktop(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
   useEffect(() => {
@@ -115,7 +125,7 @@ export function NowPlaying() {
         ref={parentRef}
         style={{
           width: '100%',
-          overflowX: 'auto',
+          overflowX: isDesktop ? 'hidden' : 'auto',
           overflowY: 'hidden',
         }}
       >
