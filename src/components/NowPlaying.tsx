@@ -16,7 +16,7 @@ export function NowPlaying() {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [playTitle, setPlayTitle] = useState<string>("I'm Now Playing");
-  const [iframeWidth, setIframeWidth] = useState(300);
+  const [iframeWidth, setIframeWidth] = useState(200);
   const parentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
