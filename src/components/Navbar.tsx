@@ -166,7 +166,7 @@ const Navbar = () => {
         animate={{
           y: isVisible ? window.innerHeight - blockSize * (maxY + 1) - 16 : -200,
           opacity: isVisible ? 1 : 0,
-          transition: { type: 'tween', duration: 3.6, ease: 'easeOut' }
+          transition: { type: 'tween', duration: 3, ease: 'easeOut' }
         }}
         onUpdate={latest => {
           const landingY = window.innerHeight - blockSize * (maxY + 1) - 16;
@@ -181,13 +181,12 @@ const Navbar = () => {
               hitAudioRef.current.currentTime = 0;
               hitAudioRef.current.play();
             }
+            // Set isFalling to false when really at the bottom
+            setIsFalling(false);
           }
           if (!isVisible) {
             hasPlayedHit.current = false;
           }
-        }}
-        onAnimationComplete={() => {
-          setIsFalling(false);
         }}
         className="fixed top-0 left-0 z-50"
         style={{
