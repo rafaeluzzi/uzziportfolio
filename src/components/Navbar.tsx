@@ -5,6 +5,8 @@ import hitSfx from '../lib/sfx/hit.mp3'; // Adjust path if needed
 import rotateSfx from '../lib/sfx/rotate.wav'; // Adjust path if needed
 import clearSfx from '../lib/sfx/clear.wav'; // Adjust path if needed
 
+const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
+
 const Navbar = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -53,6 +55,10 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      if (isMobile) {
+        setIsVisible(true);
+        return;
+      }
       const currentScrollY = window.scrollY;
       if (hideDelayTimeout.current) clearTimeout(hideDelayTimeout.current);
 
@@ -83,7 +89,7 @@ const Navbar = () => {
       if (hideDelayTimeout.current) clearTimeout(hideDelayTimeout.current);
       if (hideTimeout.current) clearTimeout(hideTimeout.current);
     };
-  }, [lastScrollY, isVisible, tetrisShapes.length]);
+  }, [lastScrollY, isVisible, tetrisShapes.length, isMobile]);
 
   useEffect(() => {
     // Show navbar with animation on first load
@@ -115,6 +121,26 @@ const Navbar = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFalling]);
+
+  useEffect(() => {
+    if (!isFalling) return;
+
+    const handleTouch = (e: TouchEvent) => {
+      // Prevent accidental link clicks while falling
+      e.preventDefault();
+      setRotation(r => (r + 1) % 4);
+      if (rotateAudioRef.current) {
+        rotateAudioRef.current.currentTime = 0;
+        rotateAudioRef.current.play();
+      }
+    };
+
+    window.addEventListener('touchstart', handleTouch, { passive: false });
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouch);
+    };
   }, [isFalling]);
 
   useEffect(() => {
