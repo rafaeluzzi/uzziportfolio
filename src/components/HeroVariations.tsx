@@ -25,16 +25,21 @@ const techStacks = [
   { name: 'React', icon: Blocks },
   { name: 'React Native', icon: Smartphone },
   { name: 'Next.js', icon: LayoutTemplate },
+  { name: 'Tailwind CSS', icon: Flame },
+  { name: 'Chakra UI', icon: LayoutTemplate },
+  { name: 'Framer Motion', icon: Monitor },
+  { name: 'GSAP', icon: Monitor },
   { name: 'Node.js', icon: Server },
   { name: 'Express', icon: Monitor },
   { name: 'Tailwind', icon: Flame },
   { name: 'ShadCN', icon: Laptop },
-  { name: 'Vite', icon: Binary },
   { name: 'Puppeteer', icon: Bot },
   { name: 'PostgreSQL', icon: Database },
   { name: 'MongoDB', icon: Database },
   { name: 'Firebase', icon: Flame },
   { name: 'AWS', icon: Cloud },
+  { name: 'AI-assisted Tools', icon: BotMessageSquare },
+  { name: 'Vite', icon: Binary },
   { name: 'REST APIs', icon: Server },
   { name: 'JavaScript', icon: FileJson },
   { name: 'Python', icon: FileCode },
@@ -46,7 +51,6 @@ const techStacks = [
   { name: 'Netlify', icon: Boxes },
   { name: 'GitHub Copilot', icon: Bot },
   { name: 'VS Code', icon: Monitor },
-  { name: 'AI-assisted Tools', icon: BotMessageSquare }
 ];
 const Hero: React.FC = () => {
   const [direction, setDirection] = useState<'left' | 'right'>('left'); // Track the direction of the slider
@@ -55,6 +59,12 @@ const Hero: React.FC = () => {
   const [hasLaunched, setHasLaunched] = useState(false); // Track if the project has launched
   const [showUzzi, setShowUzzi] = useState(false);
   const [devMatchHovered, setDevMatchHovered] = useState(false);
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  const codingLabel = isMobile
+    ? "Experience"
+    : "Coding Experience";
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -98,7 +108,7 @@ const Hero: React.FC = () => {
   }, []);*/
 
   return (
-      <section className="min-h-screen relative flex items-center mb-[200px] md:mb-0">
+      <section className="min-h-screen relative flex items-center mb-[275px] md:mb-0">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-secondary-500/20 via-transparent to-dark-300/20"></div>
           <div className="absolute right-[15%] top-1/4 w-96 h-96 bg-secondary-600/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
@@ -227,7 +237,7 @@ const Hero: React.FC = () => {
                     {[...techStacks, ...techStacks].map((tech, index) => (
                       <motion.div
                         key={index}
-                        className="flex flex-col items-center gap-2 min-w-[60px]"
+                        className="flex flex-col items-center gap-2 min-w-[45px] md:min-w-[60px]"
                         whileHover={{ scale: 1.2 }} // Optional: Add a hover effect for individual icons
                       >
                         <tech.icon 
@@ -271,7 +281,7 @@ const Hero: React.FC = () => {
               {/* Coding Since */}
               <GlassCard 
                 icon={Keyboard}
-                label="Coding Since 2009"
+                label={codingLabel}
                 className="col-span-4 row-span-2"
               >
                 <ElapsedTime /> {/* Render the ElapsedTime component */}

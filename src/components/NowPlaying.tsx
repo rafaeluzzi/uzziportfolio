@@ -122,7 +122,7 @@ export function NowPlaying() {
         <iframe
           style={{ borderRadius: '12px' }}
           src={`${track.embedUrl}?utm_source=generator&theme=0`}
-          width="100%"
+          width="300"
           height="152"
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           loading="lazy"

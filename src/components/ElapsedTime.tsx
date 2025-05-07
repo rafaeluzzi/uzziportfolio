@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { differenceInYears, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds } from 'date-fns';
 
 const ElapsedTime: React.FC = () => {
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const startDate = new Date('2009-01-05T09:00:00');
   const [elapsedTime, setElapsedTime] = useState({
     years: 0,
@@ -35,11 +36,11 @@ const ElapsedTime: React.FC = () => {
         {elapsedTime.years}
       </span>
       <span className="text-sm text-light-300">Years</span>
-      <div className="text-center">
+      {!isMobile && <div className="text-center">
         <span className="text-sm text-light-300">
           {elapsedTime.days}d {elapsedTime.hours}h {elapsedTime.minutes}m {elapsedTime.seconds}s
         </span>
-      </div>
+      </div>}
       <div className="text-center mt-2">
       <span className="text-sm text-light-300">Building Epic Internet Apps</span>
         </div>

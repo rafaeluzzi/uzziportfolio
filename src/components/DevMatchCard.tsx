@@ -19,12 +19,10 @@ const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch, setHovered }) => 
   const projectTypes = [
     { label: 'Prototype MVP', icon: Rocket, description: 'Build a lean version to validate your idea' },
     { label: 'iOS/Android Mobile App', icon: Smartphone, description: 'Build a native or hybrid app for iOS/Android' },
-    { label: 'SaaS Software', icon: Monitor, description: 'Develop a software-as-a-service product with modern UX and workflows' },
-    { label: 'Next-Gen Website', icon: Globe, description: 'Design a modern, high-impact marketing site' },
-    { label: 'Existing Project', icon: Wrench, description: 'Resolve bugs or enhance existing software' },
+    { label: 'Custom Software', icon: Monitor, description: 'Develop a software-as-a-service product, store or any other idea you have in mind with modern UX' },
     { label: 'AI or Automation', icon: Brain, description: 'Integrate AI, chatbots, or smart workflows' },
-    { label: 'Internal Tooling', icon: Briefcase, description: 'Automate internal workflows or dashboards' },
-    { label: 'Ecommerce or Booking', icon: ShoppingCart, description: 'Enable online sales or service scheduling' },
+    { label: 'Custom API', icon: Briefcase, description: 'Create a tailored API for your needs' },
+    { label: 'Fixes & Upgrades', icon: Wrench, description: 'Resolve bugs or enhance existing software' }
   ];
 
   const handleIconClick = (type: string) => {
@@ -56,6 +54,14 @@ const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch, setHovered }) => 
         onHoverEnd={() => {
           if (!hasLaunched) setIsHovered(false);
           setHovered(false); // Notify parent
+        }}
+        onTouchStart={() => {
+          if (!hasLaunched) setIsHovered(true);
+          setHovered(true);
+        }}
+        onTouchEnd={() => {
+          if (!hasLaunched) setIsHovered(false);
+          setHovered(false);
         }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
@@ -98,7 +104,7 @@ const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch, setHovered }) => 
              
 <div className="flex flex-wrap gap-4 justify-center">
   {projectTypes.map(({ label, icon: Icon, description }) => (
-    <div key={label} className="w-14 flex flex-col items-center justify-center">
+    <div key={label} className="w-14 flex flex-col items-center justify-center  inline-block">
       <MuiTooltip
         title={description}
         arrow
@@ -126,7 +132,12 @@ const DevMatchCard: React.FC<DevMatchCardProps> = ({ onLaunch, setHovered }) => 
         <motion.div
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 1.2 }}
-          onClick={() => handleIconClick(label)}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleIconClick(label);
+          }}
+          onTouchStart={e => e.stopPropagation()}
+          onTouchEnd={e => e.stopPropagation()}
           className="w-14 h-14 flex flex-col items-center justify-center rounded-full bg-dark-100 text-primary-400 hover:text-primary-500 transition-all cursor-pointer"
         >
           <Icon size={24} />

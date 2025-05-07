@@ -11,7 +11,8 @@ interface GlassCardProps {
 }
 
 const GlassCard: React.FC<GlassCardProps> = ({ icon: Icon, label, className = "", children }) => {
-  
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const iconSize = isMobile ? 18 : 20;
   return (
     <motion.div
       className={`glass-card p-4 flex flex-col ${className}`}
@@ -20,9 +21,9 @@ const GlassCard: React.FC<GlassCardProps> = ({ icon: Icon, label, className = ""
       }}
     >
       {(Icon || label) && (
-        <div className="flex items-center gap-2 mb-2">
-          {Icon && <Icon size={20} className="text-primary-400" />}
-          {label && <span className="text-light-100 text-sm font-medium">{label}</span>}
+        <div className="flex items-center gap-1 mb-2">
+          {Icon && <Icon size={iconSize} className="text-primary-400" />}
+          {label && <span className="text-light-100 text-xs md:text-sm font-medium">{label}</span>}
         </div>
       )}
       {children}
