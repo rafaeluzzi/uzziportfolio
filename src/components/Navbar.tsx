@@ -123,25 +123,14 @@ const Navbar = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFalling]);
 
-  useEffect(() => {
-    if (!isFalling) return;
-
-    const handleTouch = (e: TouchEvent) => {
-      // Prevent accidental link clicks while falling
-      e.preventDefault();
-      setRotation(r => (r + 1) % 4);
-      if (rotateAudioRef.current) {
-        rotateAudioRef.current.currentTime = 0;
-        rotateAudioRef.current.play();
-      }
-    };
-
-    window.addEventListener('touchstart', handleTouch, { passive: false });
-
-    return () => {
-      window.removeEventListener('touchstart', handleTouch);
-    };
-  }, [isFalling]);
+  const handleTouchRotate = (e: React.TouchEvent) => {
+    e.preventDefault();
+    setRotation(r => (r + 1) % 4);
+    if (rotateAudioRef.current) {
+      rotateAudioRef.current.currentTime = 0;
+      rotateAudioRef.current.play();
+    }
+  };
 
   useEffect(() => {
     if (!isVisible && clearAudioRef.current) {
@@ -156,93 +145,109 @@ const Navbar = () => {
   const shapeOffset = blockSize * (3 - maxY);
 
   return (
-    <motion.div
-      key={shapeIndex}
-      initial={{ y: -800, opacity: 0 }}
-      animate={{
-        y: isVisible ? shapeOffset : -200,
-        opacity: isVisible ? 1 : 0,
-        transition: { type: 'spring', stiffness: 20, damping: 18 }
-      }}
-      onUpdate={latest => {
-        if (
-          isVisible &&
-          !hasPlayedHit.current &&
-          typeof latest.y === 'number' &&
-          Math.abs(latest.y - shapeOffset) < 6 // Allow for spring overshoot
-        ) {
-          hasPlayedHit.current = true;
-          if (hitAudioRef.current) {
-            hitAudioRef.current.currentTime = 0;
-            hitAudioRef.current.play();
-          }
-        }
-        if (!isVisible) {
-          hasPlayedHit.current = false;
-        }
-      }}
-      onAnimationComplete={() => {
-        setIsFalling(false);
-      }}
-      className="fixed bottom-4 left-0 z-50"
-      style={{
-        width: blockSize * 3,
-        height: blockSize * 4,
-        padding: 8,
-        pointerEvents: isFalling ? 'auto' : 'none',
-      }}
-    >
-      <audio ref={hitAudioRef} src={hitSfx} preload="auto" />
-      <audio ref={rotateAudioRef} src={rotateSfx} preload="auto" />
-      <audio ref={clearAudioRef} src={clearSfx} preload="auto" />
-      {/* Arrow icons in top-right corner while falling */}
-      
-      <div className="relative w-full h-full">
-        <AnimatePresence>
-          {isVisible &&
-            rotatedShape.map((block, index) => {
-              const link = navLinks[index];
-              if (!link) return null;
-              const Icon = link.icon;
-              const x = (Math.random() - 0.5) * 180;
-              const y = 220 + Math.random() * 80;
+    <>
+      {/* Overlay for mobile touch-to-rotate */}
+      {isFalling && isMobile && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'transparent',
+            touchAction: 'none',
+          }}
+          onTouchStart={handleTouchRotate}
+        />
+      )}
 
-              return (
-                <motion.a
-                  key={`${link.name}-${shapeIndex}`}
-                  href={link.href}
-                  className="absolute flex items-center justify-center bg-secondary-900 border border-dark-100 rounded text-light-300 hover:text-primary-400 transition-colors"
-                  style={{
-                    width: blockSize,
-                    height: blockSize,
-                    left: block.x * blockSize,
-                    top: block.y * blockSize,
-                    pointerEvents: 'auto',
-                  }}
-                  initial={{ scale: 1, opacity: 1, x: 0, y: 0 }}
-                  animate={{ scale: 1, opacity: 1, x: 0, y: 0 }}
-                  exit={{
-                    scale: 0.7,
-                    opacity: 0,
-                    x,
-                    y,
-                    rotate: 30 + Math.random() * 60,
-                    transition: { duration: 0.5, ease: 'easeIn' },
-                  }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 400,
-                    damping: 24,
-                    delay: 0.08 * index,
-                  }}
-                >
-                  <Icon size={22} />
-                </motion.a>
-              );
-            })}
-        </AnimatePresence>
-      </div>
-    </motion.div>
+      <motion.div
+        key={shapeIndex}
+        initial={{ y: -800, opacity: 0 }}
+        animate={{
+          y: isVisible ? shapeOffset : -200,
+          opacity: isVisible ? 1 : 0,
+          transition: { type: 'spring', stiffness: 20, damping: 18 }
+        }}
+        onUpdate={latest => {
+          if (
+            isVisible &&
+            !hasPlayedHit.current &&
+            typeof latest.y === 'number' &&
+            Math.abs(latest.y - shapeOffset) < 6 // Allow for spring overshoot
+          ) {
+            hasPlayedHit.current = true;
+            if (hitAudioRef.current) {
+              hitAudioRef.current.currentTime = 0;
+              hitAudioRef.current.play();
+            }
+          }
+          if (!isVisible) {
+            hasPlayedHit.current = false;
+          }
+        }}
+        onAnimationComplete={() => {
+          setIsFalling(false);
+        }}
+        className="fixed bottom-4 left-0 z-50"
+        style={{
+          width: blockSize * 3,
+          height: blockSize * 4,
+          padding: 8,
+          pointerEvents: isFalling ? 'auto' : 'none',
+        }}
+      >
+        <audio ref={hitAudioRef} src={hitSfx} preload="auto" />
+        <audio ref={rotateAudioRef} src={rotateSfx} preload="auto" />
+        <audio ref={clearAudioRef} src={clearSfx} preload="auto" />
+        {/* Arrow icons in top-right corner while falling */}
+        
+        <div className="relative w-full h-full">
+          <AnimatePresence>
+            {isVisible &&
+              rotatedShape.map((block, index) => {
+                const link = navLinks[index];
+                if (!link) return null;
+                const Icon = link.icon;
+                const x = (Math.random() - 0.5) * 180;
+                const y = 220 + Math.random() * 80;
+
+                return (
+                  <motion.a
+                    key={`${link.name}-${shapeIndex}`}
+                    href={link.href}
+                    className="absolute flex items-center justify-center bg-secondary-900 border border-dark-100 rounded text-light-300 hover:text-primary-400 transition-colors"
+                    style={{
+                      width: blockSize,
+                      height: blockSize,
+                      left: block.x * blockSize,
+                      top: block.y * blockSize,
+                      pointerEvents: 'auto',
+                    }}
+                    initial={{ scale: 1, opacity: 1, x: 0, y: 0 }}
+                    animate={{ scale: 1, opacity: 1, x: 0, y: 0 }}
+                    exit={{
+                      scale: 0.7,
+                      opacity: 0,
+                      x,
+                      y,
+                      rotate: 30 + Math.random() * 60,
+                      transition: { duration: 0.5, ease: 'easeIn' },
+                    }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 400,
+                      damping: 24,
+                      delay: 0.08 * index,
+                    }}
+                  >
+                    <Icon size={22} />
+                  </motion.a>
+                );
+              })}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+    </>
   );
 };
 
