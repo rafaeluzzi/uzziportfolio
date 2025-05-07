@@ -116,7 +116,7 @@ const Hero: React.FC = () => {
         </div>
         
         <div className="container mx-auto px-4 relative z-10 mt-20 md:mt-[-216px]">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-2 items-center">
             {/* Left column: Text content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -125,7 +125,7 @@ const Hero: React.FC = () => {
               className="space-y-6"
             >
               <motion.h1 
-                className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight"
+                className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
