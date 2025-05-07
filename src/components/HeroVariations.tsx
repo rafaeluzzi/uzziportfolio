@@ -22,6 +22,9 @@ import ElapsedTime from './ElapsedTime';
 import DevMatchCard from './DevMatchCard';
 import clsx from 'clsx'; // If not installed, run: npm install clsx
 
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
+const iconSize = isMobile ? 18 : 20;
+
 const techStacks = [
   { name: 'React', icon: Blocks },
   { name: 'React Native', icon: Smartphone },
@@ -62,7 +65,7 @@ const slideshowImages = [
 
 const slideshowTitles = [
   "18y old me",
-  "1st .git 16y ago",
+  "1st git 16y ago",
   "These Days"
 ];
 
@@ -101,7 +104,6 @@ const Slideshow: React.FC<{ index: number; setIndex: React.Dispatch<React.SetSta
         className="rounded-xl object-cover w-[62px] h-[62px] md:w-[72px] md:h-[72px] transition-all duration-700 shadow-lg"
         style={{ aspectRatio: '1/1' }}
       />
-      <span className="text-xs text-light-400 mt-1">{slideshowTitles[index]}</span>
     </div>
   );
 };
@@ -268,31 +270,39 @@ const Hero: React.FC = () => {
              
 
               {/* Social Links */}
-              <GlassCard className="col-span-4 row-span-1 flex items-center justify-center">
-                <div className="flex items-center gap-4 w-full justify-around">
-                  <Slideshow index={slideshowIndex} setIndex={setSlideshowIndex} />
-                  <div className="flex flex-col gap-2 justify-center">
-                    {socialLinks.map((link, idx) => {
-                      const Icon = link.icon;
-                      return (
-                        <a
-                          key={link.label}
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={link.label}
-                        >
-                          <Icon
-                            size={20}
-                            className={clsx(
-                              "text-light-100 hover:text-primary-400 cursor-pointer transition-colors",
-                              slideshowIndex === idx && "text-primary-400"
-                            )}
-                          />
-                        </a>
-                      );
-                    })}
+              <GlassCard
+                className={`${isMobile ? "col-span-3" : "col-span-2"} row-span-1 flex items-center justify-center pl-0 pr-2`}
+              >
+                <div className="flex flex-col items-center w-full">
+                  <div className="flex items-center gap-2 mt-2">
+                    <Slideshow index={slideshowIndex} setIndex={setSlideshowIndex} />
+                    <div className="flex flex-col gap-2 justify-center">
+                      {socialLinks.map((link, idx) => {
+                        const Icon = link.icon;
+                        return (
+                          <a
+                            key={link.label}
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={link.label}
+                          >
+                            <Icon
+                              size={iconSize}
+                              className={clsx(
+                                "text-light-100 hover:text-primary-400 cursor-pointer transition-colors",
+                                slideshowIndex === idx && "text-primary-400"
+                              )}
+                            />
+                          </a>
+                        );
+                      })}
+                    </div>
                   </div>
+                  {/* Move the title below both columns */}
+                  <span className="text-xs text-light-400 mt-0 pt-[0px]">
+                    {slideshowTitles[slideshowIndex]}
+                  </span>
                 </div>
               </GlassCard>
 
@@ -301,7 +311,7 @@ const Hero: React.FC = () => {
               <GlassCard 
                 icon={Cpu}
                 label="Tech Stack Behind My Work"
-                className="col-span-8 row-span-1 overflow-hidden"
+                className={`${isMobile ? "col-span-9" : "col-span-10"} row-span-1 overflow-hidden`}
               >
                 <div className="relative">
                   <motion.div 
