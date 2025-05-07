@@ -3,6 +3,7 @@ import { differenceInYears, differenceInDays, differenceInHours, differenceInMin
 
 const ElapsedTime: React.FC = () => {
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const isSlimMobile = window.matchMedia('(max-width: 429px)').matches;
   const startDate = new Date('2009-01-05T09:00:00');
   const [elapsedTime, setElapsedTime] = useState({
     years: 0,
@@ -42,7 +43,7 @@ const ElapsedTime: React.FC = () => {
         </span>
       </div>}
       <div className="text-center mt-2">
-      <span className="text-sm text-light-300">Building Epic Internet Apps</span>
+      <span className="text-sm text-light-300">{isSlimMobile?'Building Epic Apps':'Building Epic Internet Apps'}</span>
         </div>
     </div>
   );

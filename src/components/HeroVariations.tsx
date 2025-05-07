@@ -108,21 +108,21 @@ const Hero: React.FC = () => {
   }, []);*/
 
   return (
-      <section className="min-h-screen relative flex items-center mb-[275px] md:mb-0">
+      <section className="min-h-screen relative flex items-center mb-[275px] lg:mb-0">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-secondary-500/20 via-transparent to-dark-300/20"></div>
           <div className="absolute right-[15%] top-1/4 w-96 h-96 bg-secondary-600/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
           <div className="absolute left-[10%] bottom-1/3 w-96 h-96 bg-secondary-600/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
         </div>
         
-        <div className="container mx-auto px-4 relative z-10 mt-20 md:mt-[-216px]">
-          <div className="grid md:grid-cols-2 gap-2 items-center">
+        <div className="container mx-auto px-4 relative z-10 mt-20 lg:mt-[-216px]">
+          <div className="grid lg:grid-cols-2 gap-2 items-center">
             {/* Left column: Text content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="space-y-6"
+              className="space-y-6  mb-8 lg:mb-0"
             >
               <motion.h1 
                 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
@@ -274,6 +274,9 @@ const Hero: React.FC = () => {
         {block}
       </MuiTooltip>
     )}
+    labels={{
+      totalCount: '{{count}} contributions this year',
+    }}
   />
 </GlassCard>
 
