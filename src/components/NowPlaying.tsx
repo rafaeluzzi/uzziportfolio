@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Music } from 'lucide-react';
 import { motion } from 'framer-motion';
 import GlassCard from './GlassCard';
@@ -16,6 +16,25 @@ export function NowPlaying() {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [playTitle, setPlayTitle] = useState<string>("I'm Now Playing");
+  const [iframeWidth, setIframeWidth] = useState(300);
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!parentRef.current) return;
+    const handleResize = () => {
+      if (parentRef.current) {
+        setIframeWidth(parentRef.current.offsetWidth);
+      }
+    };
+    handleResize(); // set initial width
+
+    const resizeObserver = new window.ResizeObserver(handleResize);
+    resizeObserver.observe(parentRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     async function fetchNowPlaying() {
@@ -91,45 +110,47 @@ export function NowPlaying() {
       className="col-span-8 row-span-2"
       label={playTitle}
     >
-      {isLoading ? (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '152px',
-          }}
-        >
-          <motion.div
-            className="w-64 h-1 bg-dark-100 rounded-full overflow-hidden mb-4"
-            initial={{ width: 0 }}
-            animate={{ width: 256 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+      <div ref={parentRef} style={{ width: '100%' }}>
+        {isLoading ? (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '152px',
+            }}
           >
             <motion.div
-              className="h-full bg-gradient-to-r from-primary-500 to-secondary-500"
-              initial={{ width: '0%' }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.1 }}
-            />
-          </motion.div>
-          <div className="text-sm text-light-300 font-mono">
-            {progress < 100 ? 'Track updating...' : 'Track updated!'}
+              className="w-64 h-1 bg-dark-100 rounded-full overflow-hidden mb-4"
+              initial={{ width: 0 }}
+              animate={{ width: 256 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <motion.div
+                className="h-full bg-gradient-to-r from-primary-500 to-secondary-500"
+                initial={{ width: '0%' }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.1 }}
+              />
+            </motion.div>
+            <div className="text-sm text-light-300 font-mono">
+              {progress < 100 ? 'Track updating...' : 'Track updated!'}
+            </div>
           </div>
-        </div>
-      ) : track ? (
-        <iframe
-          style={{ borderRadius: '12px' }}
-          src={`${track.embedUrl}?utm_source=generator&theme=0`}
-          width="300"
-          height="152"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-        ></iframe>
-      ) : (
-        <div className="text-light-300 text-center">No track playing</div>
-      )}
+        ) : track ? (
+          <iframe
+            style={{ borderRadius: '12px' }}
+            src={`${track.embedUrl}?utm_source=generator&theme=0`}
+            width={iframeWidth}
+            height="152"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          ></iframe>
+        ) : (
+          <div className="text-light-300 text-center">No track playing</div>
+        )}
+      </div>
     </GlassCard>
   );
 }
