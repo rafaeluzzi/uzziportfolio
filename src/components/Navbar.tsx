@@ -183,14 +183,13 @@ const Navbar = () => {
       }}
       onAnimationComplete={() => {
         setIsFalling(false);
-        // No need to play sound here anymore
       }}
       className="fixed bottom-4 left-0 z-50"
       style={{
         width: blockSize * 3,
         height: blockSize * 4,
         padding: 8,
-        pointerEvents: 'none',
+        pointerEvents: isFalling ? 'auto' : 'none',
       }}
     >
       <audio ref={hitAudioRef} src={hitSfx} preload="auto" />
