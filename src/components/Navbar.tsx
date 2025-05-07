@@ -21,6 +21,15 @@ const Navbar = () => {
   const rotateAudioRef = useRef<HTMLAudioElement | null>(null);
   const clearAudioRef = useRef<HTMLAudioElement | null>(null);
   const hasPlayedHit = useRef(false);
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const navLinks = [
     { name: 'Home', href: '#home', icon: Home },
@@ -165,12 +174,12 @@ const Navbar = () => {
       <motion.div
         initial={{ y: -100, opacity: 1 }}
         animate={{
-          y: isVisible ? window.innerHeight - blockSize * (maxY + 1) - 16 : -200,
+          y: isVisible ? viewportHeight - blockSize * (maxY + 1) - 16 : -200,
           opacity: isVisible ? 1 : 0,
           transition: { type: 'tween', duration: 3, ease: 'easeOut' }
         }}
         onUpdate={latest => {
-          const landingY = window.innerHeight - blockSize * (maxY + 1) - 16;
+          const landingY = viewportHeight - blockSize * (maxY + 1) - 16;
           if (
             isVisible &&
             !hasPlayedHit.current &&
