@@ -24,6 +24,7 @@ export function NowPlaying() {
     const handleResize = () => {
       if (parentRef.current) {
         setIframeWidth(Math.max(224, parentRef.current.offsetWidth));
+        parentRef.current.scrollLeft = parentRef.current.scrollWidth;
       }
     };
     handleResize(); // set initial width
@@ -110,7 +111,14 @@ export function NowPlaying() {
       className="col-span-8 row-span-2"
       label={playTitle}
     >
-      <div ref={parentRef} style={{ width: '100%' }}>
+      <div
+        ref={parentRef}
+        style={{
+          width: '100%',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+        }}
+      >
         {isLoading ? (
           <div
             style={{
