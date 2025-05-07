@@ -14,7 +14,7 @@ const Navbar = () => {
     Math.floor(Math.random() * 4)
   );
   const [rotation, setRotation] = useState(0); // 0, 1, 2, 3
-  const [isFalling, setIsFalling] = useState(false);
+  const [isFalling, setIsFalling] = useState(true);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const hideDelayTimeout = useRef<NodeJS.Timeout | null>(null);
   const hitAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -103,7 +103,7 @@ const Navbar = () => {
   }, [isVisible, shapeIndex]);
 
   useEffect(() => {
-    if (!isFalling) return;
+    if (!isVisible) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         setRotation(r => (r + 3) % 4);
@@ -121,7 +121,7 @@ const Navbar = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFalling]);
+  }, [isVisible]);
 
   const handleTouchRotate = (e: React.TouchEvent) => {
     e.preventDefault();
@@ -147,7 +147,7 @@ const Navbar = () => {
   return (
     <>
       {/* Overlay for mobile touch-to-rotate */}
-      {isFalling && isMobile && (
+      {isMobile && isFalling && (
         <div
           style={{
             position: 'fixed',
@@ -155,25 +155,26 @@ const Navbar = () => {
             zIndex: 9999,
             background: 'transparent',
             touchAction: 'none',
+            pointerEvents: 'auto',
           }}
           onTouchStart={handleTouchRotate}
         />
       )}
 
       <motion.div
-        key={shapeIndex}
-        initial={{ y: -800, opacity: 0 }}
+        initial={{ y: -100, opacity: 1 }}
         animate={{
-          y: isVisible ? shapeOffset : -200,
+          y: isVisible ? window.innerHeight - blockSize * (maxY + 1) - 16 : -200,
           opacity: isVisible ? 1 : 0,
-          transition: { type: 'spring', stiffness: 20, damping: 18 }
+          transition: { type: 'tween', duration: 3.6, ease: 'easeOut' }
         }}
         onUpdate={latest => {
+          const landingY = window.innerHeight - blockSize * (maxY + 1) - 16;
           if (
             isVisible &&
             !hasPlayedHit.current &&
             typeof latest.y === 'number' &&
-            Math.abs(latest.y - shapeOffset) < 6 // Allow for spring overshoot
+            Math.abs(latest.y - landingY) < 2 // Allow a small margin for float rounding
           ) {
             hasPlayedHit.current = true;
             if (hitAudioRef.current) {
@@ -188,12 +189,11 @@ const Navbar = () => {
         onAnimationComplete={() => {
           setIsFalling(false);
         }}
-        className="fixed bottom-4 left-0 z-50"
+        className="fixed top-0 left-0 z-50"
         style={{
           width: blockSize * 3,
           height: blockSize * 4,
-          padding: 8,
-          pointerEvents: isFalling ? 'auto' : 'none',
+          padding: 8
         }}
       >
         <audio ref={hitAudioRef} src={hitSfx} preload="auto" />
