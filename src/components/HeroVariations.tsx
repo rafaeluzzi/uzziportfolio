@@ -11,7 +11,7 @@ import {
   Flame, Laptop,
   Bot, Container, 
   GitBranch, Upload,
-  Boxes, Binary,BotMessageSquare,Cpu} from 'lucide-react';
+  Boxes, Binary,BotMessageSquare,Cpu,Linkedin} from 'lucide-react';
 import GlassCard from './GlassCard';
 import GlassCardAi from './GlassCardAi';
 import AppleMap from './AppleMap';
@@ -20,6 +20,7 @@ import { Tooltip as MuiTooltip } from '@mui/material';
 import { NowPlaying } from './NowPlaying'; 
 import ElapsedTime from './ElapsedTime';
 import DevMatchCard from './DevMatchCard';
+import clsx from 'clsx'; // If not installed, run: npm install clsx
 
 const techStacks = [
   { name: 'React', icon: Blocks },
@@ -52,6 +53,59 @@ const techStacks = [
   { name: 'GitHub Copilot', icon: Bot },
   { name: 'VS Code', icon: Monitor },
 ];
+
+const slideshowImages = [
+  'https://pbs.twimg.com/profile_images/1891978978233024512/XnKTanIU_400x400.jpg', // Twitter
+  'https://avatars.githubusercontent.com/u/43967?v=4&size=200', // GitHub
+  'https://media.licdn.com/dms/image/v2/D4E03AQEJqdCxbXarvg/profile-displayphoto-shrink_800_800/B4EZasGfS1GYAg-/0/1746644105099?e=1752105600&v=beta&t=qewkL5A_yEu0xiaMD_8Fx1sr0WA-IVQvxET5NJA5-s0', // Website
+];
+
+const slideshowTitles = [
+  "18y old me",
+  "1st .git 16y ago",
+  "These Days"
+];
+
+const socialLinks = [
+  {
+    href: "https://x.com/rafaeluzzi",
+    icon: Twitter,
+    label: "Twitter",
+  },
+  {
+    href: "https://github.com/rafaeluzzi",
+    icon: Github,
+    label: "GitHub",
+  },
+  {
+    href: "https://linkedin.com/in/rafaeluzzi",
+    icon: Linkedin,
+    label: "LinkedIn",
+  },
+];
+
+// Slideshow now receives index and setIndex as props
+const Slideshow: React.FC<{ index: number; setIndex: React.Dispatch<React.SetStateAction<number>> }> = ({ index, setIndex }) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % slideshowImages.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [setIndex]);
+
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center">
+      <img
+        src={slideshowImages[index]}
+        alt="Portrait Slideshow"
+        className="rounded-xl object-cover w-[62px] h-[62px] md:w-[72px] md:h-[72px] transition-all duration-700 shadow-lg"
+        style={{ aspectRatio: '1/1' }}
+      />
+      <span className="text-xs text-light-400 mt-1">{slideshowTitles[index]}</span>
+    </div>
+  );
+};
+
 const Hero: React.FC = () => {
   const [direction, setDirection] = useState<'left' | 'right'>('left'); // Track the direction of the slider
   const controls = useAnimation(); // Framer Motion animation controls
@@ -60,6 +114,7 @@ const Hero: React.FC = () => {
   const [showUzzi, setShowUzzi] = useState(false);
   const [devMatchHovered, setDevMatchHovered] = useState(false);
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const [slideshowIndex, setSlideshowIndex] = useState(0);
 
   const codingLabel = isMobile
     ? "Experience"
@@ -194,6 +249,10 @@ const Hero: React.FC = () => {
               transition={{ delay: 0.7 }}
               className="rightbento grid grid-cols-12 auto-rows-[100px] gap-2 relative "
             >
+               {/* Music */}
+            
+               <NowPlaying />
+
               {/* Location */}
               <GlassCard 
                 icon={MapPin}
@@ -206,16 +265,34 @@ const Hero: React.FC = () => {
                 </div>
               </GlassCard>
 
-              {/* Music */}
-            
-               <NowPlaying />
+             
 
               {/* Social Links */}
-              <GlassCard className="col-span-4 row-span-1">
-                <div className="flex justify-around w-full">
-                  <Twitter size={20} className="text-light-100 hover:text-primary-400 cursor-pointer" />
-                  <Github size={20} className="text-light-100 hover:text-primary-400 cursor-pointer" />
-                  <Globe size={20} className="text-light-100 hover:text-primary-400 cursor-pointer" />
+              <GlassCard className="col-span-4 row-span-1 flex items-center justify-center">
+                <div className="flex items-center gap-4 w-full justify-around">
+                  <Slideshow index={slideshowIndex} setIndex={setSlideshowIndex} />
+                  <div className="flex flex-col gap-2 justify-center">
+                    {socialLinks.map((link, idx) => {
+                      const Icon = link.icon;
+                      return (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={link.label}
+                        >
+                          <Icon
+                            size={20}
+                            className={clsx(
+                              "text-light-100 hover:text-primary-400 cursor-pointer transition-colors",
+                              slideshowIndex === idx && "text-primary-400"
+                            )}
+                          />
+                        </a>
+                      );
+                    })}
+                  </div>
                 </div>
               </GlassCard>
 
