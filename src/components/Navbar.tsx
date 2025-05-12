@@ -152,7 +152,6 @@ const Navbar = () => {
   const selectedShape = tetrisShapes[shapeIndex];
   const rotatedShape = rotateShape(selectedShape, rotation);
   const maxY = Math.max(...rotatedShape.map(b => b.y));
-  const shapeOffset = blockSize * (3 - maxY);
 
   return (
     <>

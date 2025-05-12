@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { 
-  ArrowRight, Code, Server, 
+  Code, Server, 
   Smartphone, Github, MapPin,
-  Twitter, Globe,
+  Twitter, 
   Keyboard, 
   FileJson, FileCode, Blocks, 
   LayoutTemplate, Monitor, 

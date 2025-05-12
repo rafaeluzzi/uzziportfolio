@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Smartphone, Monitor, Globe, Bot, Wrench, Brain, Rocket, Briefcase, ShoppingCart } from 'lucide-react';
+import { Smartphone, Monitor, Bot, Wrench, Brain, Rocket, Briefcase } from 'lucide-react';
 import DevInquiryWizard from './DevInquiryWizard';
 import { Tooltip as MuiTooltip } from '@mui/material';
 
