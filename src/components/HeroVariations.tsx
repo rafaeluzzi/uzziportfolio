@@ -64,7 +64,7 @@ const slideshowImages = [
 ];
 
 const slideshowTitles = [
-  "18y old me",
+  "Long time ago",
   "1st git 16y ago",
   "These Days"
 ];
