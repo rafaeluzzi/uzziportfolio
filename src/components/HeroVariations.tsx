@@ -66,7 +66,7 @@ const slideshowImages = [
 const slideshowTitles = [
   "Long time ago",
   "1st git 16y ago",
-  "These Days"
+  "These days"
 ];
 
 const socialLinks = [

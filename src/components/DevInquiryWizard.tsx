@@ -18,12 +18,42 @@ const DevInquiryWizard: React.FC<DevInquiryWizardProps> = ({ projectType, onClos
     budget: '',
     timeline: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiInspiration, setAiInspiration] = useState<string[]>([]);
 
-  const handleInputSubmit = () => {
-    // Simulated AI Summary & Classification
-    setSummary(`• ${inputText.slice(0, 50)}...`);
-    setClassification('Likely a full-stack app with auth');
-    setStep(1);
+  const inspirationOptions: Record<string, string[]> = {
+    'Prototype MVP': ['Lean SaaS', 'Landing Page', 'Simple Dashboard'],
+    'iOS/Android Mobile App': ['Social App', 'Fitness Tracker', 'Delivery App'],
+    'Custom Software': ['Marketplace', 'Booking System', 'CRM'],
+  };
+
+  const defaultOptions = ["SaaS Dashboard", "Booking App", "Marketplace"];
+
+  const handleInputSubmit = async () => {
+    setLoading(true);
+    setAiError(null);
+    try {
+      const response = await fetch('/.netlify/functions/ai-inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          input: inputText,
+          mode,
+          projectType,
+        }),
+      });
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      setSummary(data.summary);
+      setClassification(data.classification);
+      setAiInspiration(data.inspirationOptions || []);
+      setStep(1);
+    } catch (err) {
+      setAiError('Sorry, something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInspirationSelect = (label: string) => {
@@ -96,7 +126,7 @@ const DevInquiryWizard: React.FC<DevInquiryWizardProps> = ({ projectType, onClos
             <h2 className="text-xl font-bold text-primary-400 mb-4">Similar Product Inspiration</h2>
             <p className="mb-4">We analyzed your input and found these matches:</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {["SaaS Dashboard", "Booking App", "Marketplace"].map((label) => (
+              {(inspirationOptions[projectType] || defaultOptions).map((label) => (
                 <button
                   key={label}
                   onClick={() => handleInspirationSelect(label)}
