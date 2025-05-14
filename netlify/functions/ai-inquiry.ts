@@ -1,7 +1,6 @@
 import type { Handler } from '@netlify/functions';
 
-//const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST') {
